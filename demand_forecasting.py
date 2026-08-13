@@ -1607,7 +1607,16 @@ metrics_table.to_excel(
 
 
 # ============================================================
-# 38. SAVE JSON + EXCEL OUTPUT SUMMARY
+# 37.5 SAVE TO OUTPUT.DB
+# ============================================================
+
+import sqlite3
+conn = sqlite3.connect('output.db')
+final_predictions.to_sql('predicted_outputs', conn, if_exists='replace', index=False)
+conn.close()
+
+# ============================================================
+# 38. SAVE JSON + EXCEL + DB OUTPUT SUMMARY
 # ============================================================
 
 print("\n")

@@ -161,6 +161,26 @@ class ForecastingService:
         db.bulk_save_objects(forecasts_to_save)
         db.commit()
         logger.info(f"Saved {len(forecasts_to_save)} forecasts to database.")
+        
+        # Save the predicted outputs to output.db as requested
+        try:
+            import sqlite3
+            df_out = pd.DataFrame([{
+                "prediction_date": f.prediction_date,
+                "sku_id": f.sku_id,
+                "dc_id": f.dc_id,
+                "forecast_date": f.forecast_date,
+                "forecasted_demand": f.forecasted_demand,
+                "horizon_days": f.horizon_days,
+                "confidence_score": f.confidence_score
+            } for f in forecasts_to_save])
+            conn = sqlite3.connect('output.db')
+            df_out.to_sql('predicted_outputs', conn, if_exists='replace', index=False)
+            conn.close()
+            logger.info("Saved predicted outputs to output.db")
+        except Exception as e:
+            logger.error(f"Failed to save to output.db: {e}")
+            
         return forecasts_to_save
         
     def generate_single_forecast(self, sku_id: str, dc_id: str, current_stock: float, hist_demand: list, is_promotional: bool = False, sim_multiplier: float = 1.0) -> dict:

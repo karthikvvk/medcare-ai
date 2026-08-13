@@ -41,8 +41,8 @@ def check_dependencies():
         
     # Generate initial forecasts and recommendations in the database for current date 2026-08-12
     # We will invoke our forecast/recommendation seeder to ensure database starts with data
-    print("Pre-seeding initial forecasts and action recommendations in database...")
-    subprocess.run([sys.executable, "scripts/run_demo.py", "--init"], check=True)
+    # print("Pre-seeding initial forecasts and action recommendations in database...")
+    # subprocess.run([sys.executable, "scripts/run_demo.py", "--init"], check=True)
     
     print("All assets verified and ready!")
 

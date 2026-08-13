@@ -199,6 +199,27 @@ async function changeScenario() {
     }
 }
 
+// Handle Refresh Prediction button
+async function refreshPrediction() {
+    showToast("Running prediction models on demand...", "info");
+    try {
+        // Trigger prediction generation
+        const foreRes = await fetch(`${API_BASE}/forecast/generate?prediction_date=2026-08-12`, { method: 'POST' });
+        if (!foreRes.ok) throw new Error("Failed to generate forecasts");
+        
+        // Regenerate recommendations based on the new forecasts
+        const recRes = await fetch(`${API_BASE}/recommendations?date_str=2026-08-12&regenerate=true`);
+        if (!recRes.ok) throw new Error("Failed to refresh recommendations");
+        
+        showToast("Prediction and recommendations updated successfully!", "success");
+        // Reload current page to display new numbers
+        switchPage(activePage);
+    } catch (e) {
+        showToast("Error running prediction.", "critical");
+        console.error(e);
+    }
+}
+
 // --- Page Builders ---
 
 async function renderOverview(container) {

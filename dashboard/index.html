@@ -67,9 +67,9 @@
                     <button class="theme-toggle-btn" id="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Theme" style="background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-glass); color: var(--text-primary); padding: 8px 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; transition: var(--transition-smooth);">
                         <i id="theme-icon" class="fa-solid fa-moon"></i>
                     </button>
-                    <div class="status-badge">
-                        <span class="status-dot"></span> System: Operational
-                    </div>
+                    <button class="status-badge" style="cursor: pointer; background: transparent; border: 1px solid var(--border-glass); color: var(--text-primary); font-family: inherit; font-size: inherit; transition: var(--transition-smooth);" onclick="refreshPrediction()">
+                        <i class="fa-solid fa-arrows-rotate"></i> Refresh Prediction
+                    </button>
                 </div>
             </header>
 
