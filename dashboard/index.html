@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedCare Pharma — Supply Chain Control Tower</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for premium interactive visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <h2>MEDCARE PHARMA</h2>
+                <span>Control Tower</span>
+            </div>
+            <nav class="sidebar-menu">
+                <a href="#" class="menu-item active" id="menu-overview" onclick="switchPage('overview')">
+                    <i class="fa-solid fa-chart-line"></i> Executive Overview
+                </a>
+                <a href="#" class="menu-item" id="menu-forecast" onclick="switchPage('forecast')">
+                    <i class="fa-solid fa-arrow-trend-up"></i> Demand Sensing
+                </a>
+                <a href="#" class="menu-item" id="menu-inventory" onclick="switchPage('inventory')">
+                    <i class="fa-solid fa-boxes-stacked"></i> Inventory Status
+                </a>
+                <a href="#" class="menu-item" id="menu-expiry" onclick="switchPage('expiry')">
+                    <i class="fa-solid fa-hourglass-half"></i> Expiry Management
+                </a>
+                <a href="#" class="menu-item" id="menu-replenish" onclick="switchPage('replenish')">
+                    <i class="fa-solid fa-truck-ramp-box"></i> Replenishments
+                </a>
+                <a href="#" class="menu-item" id="menu-transfers" onclick="switchPage('transfers')">
+                    <i class="fa-solid fa-right-left"></i> Inter-DC Transfers
+                </a>
+                <a href="#" class="menu-item" id="menu-actions" onclick="switchPage('actions')">
+                    <i class="fa-solid fa-shield-halved"></i> Action Center
+                </a>
+                <a href="#" class="menu-item" id="menu-simulation" onclick="switchPage('simulation')">
+                    <i class="fa-solid fa-flask"></i> What-If Simulation
+                </a>
+
+                <a href="#" class="menu-item" id="menu-explorer" onclick="switchPage('explorer')">
+                    <i class="fa-solid fa-database"></i> Data Explorer
+                </a>
+
+            </nav>
+            <div class="sidebar-footer">
+                <p>MedCare Control Tower v2.0.0</p>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="main-content">
+            <!-- Header Section -->
+            <header class="app-header">
+                <div class="header-info">
+                    <h1 id="header-title">Executive Overview</h1>
+                    <p id="header-subtitle">Real-time supply chain sensor network and replenishment optimization</p>
+                </div>
+                <div class="header-controls">
+
+                    <button class="theme-toggle-btn" id="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Theme" style="background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-glass); color: var(--text-primary); padding: 8px 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; transition: var(--transition-smooth);">
+                        <i id="theme-icon" class="fa-solid fa-moon"></i>
+                    </button>
+                    <div class="status-badge">
+                        <span class="status-dot"></span> System: Operational
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page Container (Dynamic content injected here) -->
+            <div id="page-container" class="page-container">
+                <!-- Injected dynamically by app.js -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

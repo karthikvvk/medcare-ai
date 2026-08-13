@@ -1,0 +1,41 @@
+sku_id,name,category,therapeutic_class,unit_cost,criticality,shelf_life_days,base_demand,demand_variability,min_order_qty
+MED001,Medication-ANA-1,Analgesic,Pain Management,30.67,LOW,232,21.5,0.26,50
+MED002,Medication-GAS-2,Gastrointestinal,Stomach Care,31.76,MEDIUM,488,21.91,0.22,50
+MED003,Medication-EME-3,Emergency,Critical Care,67.67,CRITICAL,292,69.88,0.2,500
+MED004,Medication-DIA-4,Diabetes,Endocrinology,97.67,CRITICAL,537,130.94,0.1,500
+MED005,Medication-RES-5,Respiratory,Pulmonology,92.8,HIGH,232,49.45,0.46,50
+MED006,Medication-GAS-6,Gastrointestinal,Stomach Care,74.43,MEDIUM,202,25.8,0.37,500
+MED007,Medication-EME-7,Emergency,Critical Care,14.06,CRITICAL,330,62.48,0.24,200
+MED008,Medication-CAR-8,Cardiovascular,Heart Care,31.21,CRITICAL,328,120.46,0.11,50
+MED009,Medication-CAR-9,Cardiovascular,Heart Care,57.14,CRITICAL,366,136.65,0.16,100
+MED010,Medication-RES-10,Respiratory,Pulmonology,85.71,HIGH,529,54.87,0.6,50
+MED011,Medication-ANT-11,Antipyretic,Fever control,58.16,LOW,318,52.05,0.25,100
+MED012,Medication-RES-12,Respiratory,Pulmonology,31.34,HIGH,196,89.0,0.63,200
+MED013,Medication-GAS-13,Gastrointestinal,Stomach Care,113.43,MEDIUM,341,36.06,0.24,100
+MED014,Medication-VIT-14,Vitamin,Nutrition,57.77,LOW,315,43.74,0.38,100
+MED015,Medication-CAR-15,Cardiovascular,Heart Care,90.91,CRITICAL,399,124.5,0.18,500
+MED016,Medication-RES-16,Respiratory,Pulmonology,63.6,HIGH,226,45.35,0.7,50
+MED017,Medication-ANA-17,Analgesic,Pain Management,83.26,LOW,485,29.17,0.23,50
+MED018,Medication-GAS-18,Gastrointestinal,Stomach Care,65.85,MEDIUM,463,42.9,0.4,50
+MED019,Medication-ANA-19,Analgesic,Pain Management,35.68,LOW,508,60.9,0.31,200
+MED020,Medication-ANA-20,Analgesic,Pain Management,5.37,LOW,314,37.61,0.23,100
+MED021,Medication-EME-21,Emergency,Critical Care,39.32,CRITICAL,507,141.26,0.23,100
+MED022,Medication-ANT-22,Antipyretic,Fever control,114.65,LOW,451,42.43,0.23,50
+MED023,Medication-RES-23,Respiratory,Pulmonology,46.74,HIGH,337,64.2,0.43,100
+MED024,Medication-ANT-24,Antibiotic,Infectious Diseases,14.06,HIGH,428,34.45,0.31,50
+MED025,Medication-EME-25,Emergency,Critical Care,59.66,CRITICAL,461,126.58,0.12,100
+MED026,Medication-DIA-26,Diabetes,Endocrinology,115.9,CRITICAL,456,102.77,0.19,100
+MED027,Medication-DIA-27,Diabetes,Endocrinology,47.94,CRITICAL,444,89.9,0.2,500
+MED028,Medication-ANA-28,Analgesic,Pain Management,7.42,LOW,463,34.87,0.21,100
+MED029,Medication-CAR-29,Cardiovascular,Heart Care,11.77,CRITICAL,214,50.72,0.21,50
+MED030,Medication-RES-30,Respiratory,Pulmonology,81.93,HIGH,289,34.96,0.47,100
+MED031,Medication-VIT-31,Vitamin,Nutrition,51.81,LOW,228,34.58,0.29,50
+MED032,Medication-GAS-32,Gastrointestinal,Stomach Care,104.34,MEDIUM,207,41.26,0.28,50
+MED033,Medication-ANT-33,Antibiotic,Infectious Diseases,104.09,HIGH,307,44.16,0.27,100
+MED034,Medication-CAR-34,Cardiovascular,Heart Care,26.1,CRITICAL,416,103.63,0.12,100
+MED035,Medication-ANA-35,Analgesic,Pain Management,68.29,LOW,205,46.59,0.37,50
+MED036,Medication-ANA-36,Analgesic,Pain Management,24.13,LOW,428,75.58,0.37,500
+MED037,Medication-CAR-37,Cardiovascular,Heart Care,23.93,CRITICAL,181,136.47,0.24,500
+MED038,Medication-DIA-38,Diabetes,Endocrinology,37.8,CRITICAL,536,142.65,0.22,500
+MED039,Medication-ANT-39,Antipyretic,Fever control,11.73,LOW,457,31.39,0.24,50
+MED040,Medication-RES-40,Respiratory,Pulmonology,62.83,HIGH,451,34.0,0.58,100
