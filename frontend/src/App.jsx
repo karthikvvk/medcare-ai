@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import { ToastProvider, useToast } from './components/Toast';
@@ -20,6 +20,7 @@ function AppContent() {
   const [dcs, setDcs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0); // force page re-mount on refresh
+  const [actionPriority, setActionPriority] = useState('CRITICAL'); // deep-link priority for Action Center
   const showToast = useToast();
 
   useEffect(() => {
@@ -60,7 +61,13 @@ function AppContent() {
     }
   }, [showToast]);
 
-  const pageProps = { skus, dcs, refreshKey };
+  // Navigate to a page, optionally pre-setting the Action Center priority filter
+  const navigateTo = useCallback((page, opts = {}) => {
+    if (opts.actionPriority) setActionPriority(opts.actionPriority);
+    setActivePage(page);
+  }, []);
+
+  const pageProps = { skus, dcs, refreshKey, onNavigate: navigateTo };
 
   let PageComponent;
   switch (activePage) {
@@ -70,7 +77,7 @@ function AppContent() {
     case 'expiry':      PageComponent = <Expiry      {...pageProps} />; break;
     case 'replenish':   PageComponent = <Replenishments {...pageProps} />; break;
     case 'transfers':   PageComponent = <Transfers   {...pageProps} />; break;
-    case 'actions':     PageComponent = <Actions     {...pageProps} />; break;
+    case 'actions':     PageComponent = <Actions     {...pageProps} initialPriority={actionPriority} />; break;
     case 'simulation':  PageComponent = <Simulation  {...pageProps} />; break;
     case 'explorer':    PageComponent = <Explorer    {...pageProps} />; break;
     default:            PageComponent = <Overview    {...pageProps} />;

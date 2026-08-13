@@ -9,9 +9,9 @@ const gridColor = () => isLight() ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.04)
 const tickColor = () => isLight() ? '#475569' : '#94a3b8';
 const legendColor = () => isLight() ? '#0f172a' : '#f8fafc';
 
-export default function Actions({ skus, dcs }) {
+export default function Actions({ skus, dcs, initialPriority = 'CRITICAL' }) {
   const [recs, setRecs] = useState([]);
-  const [priority, setPriority] = useState('CRITICAL');
+  const [priority, setPriority] = useState(initialPriority);
   const [loading, setLoading] = useState(true);
   const [drilldown, setDrilldown] = useState(null);
   const showToast = useToast();

@@ -3,3 +3,4 @@ __pycache__/
 *.db-shm
 *.db-wal
 output.db
+expiry_related_programs_temp_dir/

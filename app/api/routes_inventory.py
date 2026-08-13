@@ -6,12 +6,14 @@ from app.core.database import get_db
 from app.services.inventory_service import InventoryService
 from app.services.risk_service import RiskService
 from app.services.expiry_service import ExpiryService
+from app.services.expiry_prediction_service import ExpiryPredictionService
 from app.models.database_models import SKU, DistributionCenter
 
 router = APIRouter(prefix="/inventory", tags=["Inventory & Risks"])
 inventory_service = InventoryService()
 risk_service = RiskService()
 expiry_service = ExpiryService()
+expiry_prediction_service = ExpiryPredictionService()
 
 @router.get("/status")
 def get_inventory_status(
@@ -89,3 +91,20 @@ def get_expiry_risks(
         
     reports = expiry_service.simulate_fefo_expiry_risks(db, current_date)
     return reports
+
+@router.get("/expiry-predictions")
+def get_expiry_predictions(
+    date_str: str = Query(..., description="Date of evaluation (YYYY-MM-DD)"),
+    db: Session = Depends(get_db)
+):
+    """
+    Runs the Expiry Aware Allocation Model (Weighted Risk Scoring) on all active batches.
+    Returns per-tier predictions, warehouse-level risk cards, and AI suggestions per tier.
+    """
+    try:
+        current_date = date.fromisoformat(date_str)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid date format. Use YYYY-MM-DD.")
+
+    result = expiry_prediction_service.run_expiry_model(db, current_date)
+    return result

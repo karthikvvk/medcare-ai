@@ -21,6 +21,7 @@ export const getInventoryStatus = (date = DATE) => apiFetch(`${API_BASE}/invento
 export const getRecommendations = (date = DATE, regenerate = false) =>
   apiFetch(`${API_BASE}/recommendations?date_str=${date}&regenerate=${regenerate}`);
 export const getExpiryRisks = (date = DATE) => apiFetch(`${API_BASE}/inventory/expiry-risks?date_str=${date}`);
+export const getExpiryPredictions = (date = DATE) => apiFetch(`${API_BASE}/inventory/expiry-predictions?date_str=${date}`);
 export const getTransfers = () => apiFetch(`${API_BASE}/recommendations/transfers`);
 export const getForecastComparison = (predDate, skuId, dcId) =>
   apiFetch(`${API_BASE}/forecast/historical-comparison?prediction_date=${predDate}&sku_id=${skuId}&dc_id=${dcId}`);
