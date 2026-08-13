@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from sqlalchemy.orm import Session
 from app.core.logging_config import logger
 from app.models.forecasting import DemandForecaster
@@ -158,9 +158,7 @@ class ForecastingService:
                 confidence_score=confidence
             ))
             
-        db.bulk_save_objects(forecasts_to_save)
-        db.commit()
-        logger.info(f"Saved {len(forecasts_to_save)} forecasts to database.")
+        logger.info(f"Generated {len(forecasts_to_save)} forecasts.")
         
         # Save the predicted outputs to output.db as requested
         try:
@@ -175,9 +173,11 @@ class ForecastingService:
                 "confidence_score": f.confidence_score
             } for f in forecasts_to_save])
             conn = sqlite3.connect('output.db')
-            df_out.to_sql('predicted_outputs', conn, if_exists='replace', index=False)
+            
+            table_name = datetime.now().strftime('%Y-%m-%d_%H')
+            df_out.to_sql(table_name, conn, if_exists='replace', index=False)
             conn.close()
-            logger.info("Saved predicted outputs to output.db")
+            logger.info(f"Saved predicted outputs to output.db in table {table_name}")
         except Exception as e:
             logger.error(f"Failed to save to output.db: {e}")
             

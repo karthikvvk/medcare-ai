@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import { ToastProvider, useToast } from './components/Toast';
@@ -19,61 +19,80 @@ function AppContent() {
   const [skus, setSkus] = useState([]);
   const [dcs, setDcs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0); // force page re-mount on refresh
   const showToast = useToast();
 
   useEffect(() => {
+    // Apply saved theme on mount
+    const saved = localStorage.getItem('medcare-theme') || 'dark';
+    setTheme(saved);
+    document.body.className = saved === 'light' ? 'light-theme' : '';
+
     Promise.all([getSKUs(), getDCs()])
       .then(([s, d]) => {
         setSkus(s);
         setDcs(d);
         setLoading(false);
       })
-      .catch(e => {
-        showToast('Failed to load master data', 'critical');
+      .catch(() => {
+        showToast('Failed to load master data. Is the backend running?', 'critical');
         setLoading(false);
       });
   }, [showToast]);
 
-  const toggleTheme = () => {
+  const toggleTheme = useCallback(() => {
     const nextTheme = theme === 'dark' ? 'light' : 'dark';
     setTheme(nextTheme);
-    document.body.className = nextTheme + '-theme';
-  };
+    localStorage.setItem('medcare-theme', nextTheme);
+    document.body.className = nextTheme === 'light' ? 'light-theme' : '';
+  }, [theme]);
 
-  const handleRefreshPrediction = async () => {
-    showToast("Running prediction models on demand...", "info");
+  const handleRefreshPrediction = useCallback(async () => {
+    showToast('Running prediction models on demand...', 'info');
     try {
-      await generateForecasts();
+      await generateForecasts(DATE);
       await getRecommendations(DATE, true);
-      showToast("Prediction and recommendations updated successfully!", "success");
-      // trigger rerender
-      setActivePage(p => p); 
+      showToast('Prediction and recommendations updated!', 'success');
+      // Force all page components to re-fetch by remounting
+      setRefreshKey(k => k + 1);
     } catch (e) {
-      showToast("Error running prediction.", "critical");
+      showToast(`Error running prediction: ${e.message}`, 'critical');
     }
-  };
+  }, [showToast]);
+
+  const pageProps = { skus, dcs, refreshKey };
 
   let PageComponent;
   switch (activePage) {
-    case 'overview': PageComponent = <Overview skus={skus} dcs={dcs} />; break;
-    case 'forecast': PageComponent = <Forecast skus={skus} dcs={dcs} />; break;
-    case 'inventory': PageComponent = <Inventory dcs={dcs} />; break;
-    case 'expiry': PageComponent = <Expiry />; break;
-    case 'replenish': PageComponent = <Replenishments skus={skus} dcs={dcs} />; break;
-    case 'transfers': PageComponent = <Transfers skus={skus} dcs={dcs} />; break;
-    case 'actions': PageComponent = <Actions skus={skus} dcs={dcs} />; break;
-    case 'simulation': PageComponent = <Simulation skus={skus} dcs={dcs} />; break;
-    case 'explorer': PageComponent = <Explorer />; break;
-    default: PageComponent = <Overview skus={skus} dcs={dcs} />;
+    case 'overview':    PageComponent = <Overview    {...pageProps} />; break;
+    case 'forecast':    PageComponent = <Forecast    {...pageProps} />; break;
+    case 'inventory':   PageComponent = <Inventory   {...pageProps} />; break;
+    case 'expiry':      PageComponent = <Expiry      {...pageProps} />; break;
+    case 'replenish':   PageComponent = <Replenishments {...pageProps} />; break;
+    case 'transfers':   PageComponent = <Transfers   {...pageProps} />; break;
+    case 'actions':     PageComponent = <Actions     {...pageProps} />; break;
+    case 'simulation':  PageComponent = <Simulation  {...pageProps} />; break;
+    case 'explorer':    PageComponent = <Explorer    {...pageProps} />; break;
+    default:            PageComponent = <Overview    {...pageProps} />;
   }
 
   return (
     <div className="app-container">
       <Sidebar activePage={activePage} onNavigate={setActivePage} />
       <main className="main-content">
-        <Header activePage={activePage} theme={theme} onToggleTheme={toggleTheme} onRefreshPrediction={handleRefreshPrediction} />
+        <Header
+          activePage={activePage}
+          theme={theme}
+          onToggleTheme={toggleTheme}
+          onRefreshPrediction={handleRefreshPrediction}
+        />
         <div className="page-container">
-          {loading ? <div className="loading"><i className="fa-solid fa-circle-notch fa-spin" /> Loading Core Engine...</div> : PageComponent}
+          {loading ? (
+            <div className="loading" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', height: '300px', fontSize: '1.2rem', color: 'var(--text-secondary)' }}>
+              <i className="fa-solid fa-circle-notch fa-spin" style={{ color: 'var(--accent-indigo)' }} />
+              Loading MedCare Control Tower...
+            </div>
+          ) : PageComponent}
         </div>
       </main>
     </div>

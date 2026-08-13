@@ -631,3 +631,26 @@ body.light-theme .toast {
 .rec-row-header:hover td {
     background-color: rgba(255,255,255,0.02);
 }
+
+/* Loading spinner utility */
+.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    height: 200px;
+    font-size: 1rem;
+    color: var(--text-secondary);
+}
+
+/* Active tab button */
+.active-tab {
+    background-color: var(--accent-indigo) !important;
+    color: #fff !important;
+    border-color: var(--accent-indigo) !important;
+}
+
+/* Animate fade in */
+.animate-fade-in {
+    animation: fadeIn 0.4s ease-out;
+}

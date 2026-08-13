@@ -2,3 +2,4 @@ assets/
 __pycache__/
 *.db-shm
 *.db-wal
+output.db
