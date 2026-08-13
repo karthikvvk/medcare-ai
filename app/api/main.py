@@ -55,12 +55,15 @@ app.include_router(routes_forecast.router, prefix=settings.API_V1_STR)
 app.include_router(routes_inventory.router, prefix=settings.API_V1_STR)
 app.include_router(routes_recommendations.router, prefix=settings.API_V1_STR)
 
-# Mount dashboard static files
-app.mount("/static", StaticFiles(directory="dashboard"), name="static")
+# Mount dashboard static files (React Build)
+app.mount("/static", StaticFiles(directory="frontend/dist"), name="static")
+# Vite puts assets in /assets by default, so we may want to mount that too for convenience,
+# or better yet just mount the whole dist folder. But Vite index.html references /assets/...
+app.mount("/assets", StaticFiles(directory="frontend/dist/assets"), name="assets")
 
 @app.get("/")
 def read_root():
-    return FileResponse("dashboard/index.html")
+    return FileResponse("frontend/dist/index.html")
 
 if __name__ == "__main__":
     import uvicorn
