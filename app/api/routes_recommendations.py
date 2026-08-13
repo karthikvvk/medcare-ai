@@ -34,7 +34,8 @@ def get_recommendations(
     recs = db.query(Recommendation).all()
     # If DB is empty, run recommendation engine once
     if not recs:
-        recs = rec_service.generate_recommendations(db, current_date)
+        rec_service.generate_recommendations(db, current_date)
+        recs = db.query(Recommendation).all()
         
     return recs
 
