@@ -5,6 +5,7 @@ const MENU_ITEMS = [
   { id: 'forecast',     icon: 'fa-arrow-trend-up',   label: 'Demand Sensing' },
   { id: 'inventory',    icon: 'fa-boxes-stacked',    label: 'Inventory Status' },
   { id: 'expiry',       icon: 'fa-hourglass-half',   label: 'Expiry Management' },
+  { id: 'surge',        icon: 'fa-bolt',             label: 'Surge Management' },
   { id: 'replenish',    icon: 'fa-truck-ramp-box',   label: 'Replenishments' },
   { id: 'transfers',    icon: 'fa-right-left',       label: 'Inter-DC Transfers' },
   { id: 'actions',      icon: 'fa-shield-halved',    label: 'Action Center' },

@@ -42,7 +42,47 @@ export default function Forecast({ skus, dcs }) {
 
   return (
     <div className="page card">
-      <h2 className="section-title"><i className="fa-solid fa-arrow-trend-up" /> Demand Sensing Analysis</h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+        <h2 className="section-title" style={{ margin: 0 }}>
+          <i className="fa-solid fa-arrow-trend-up" /> Demand Sensing Analysis
+        </h2>
+        <button 
+          className="btn btn-secondary" 
+          onClick={() => {
+            const btn = document.getElementById('forecast-refresh-btn');
+            const icon = document.getElementById('forecast-refresh-icon');
+            if (btn) btn.disabled = true;
+            if (icon) icon.classList.add('fa-spin');
+            import('../api').then(({ generateForecasts }) => {
+              generateForecasts(DATE).then(() => {
+                getForecastComparison(DATE, selectedSKU, selectedDC).then(data => {
+                  const actuals = data.actuals || [];
+                  const forecasts = data.forecasts || [];
+                  const labels = actuals.map(a => a.date.replace('2026-', ''));
+                  const actualValues = actuals.map(a => a.actual);
+                  const forecastValues = new Array(actuals.length).fill(null);
+                  if (actuals.length) forecastValues[actuals.length - 1] = actualValues[actualValues.length - 1];
+                  forecasts.forEach(f => {
+                    labels.push(f.forecast_date.replace('2026-', ''));
+                    forecastValues.push(f.forecast);
+                  });
+                  setChartData({ labels, actualValues, forecastValues });
+                  if (btn) btn.disabled = false;
+                  if (icon) icon.classList.remove('fa-spin');
+                });
+              }).catch(() => {
+                if (btn) btn.disabled = false;
+                if (icon) icon.classList.remove('fa-spin');
+              });
+            });
+          }}
+          id="forecast-refresh-btn"
+          style={{ fontSize: '13px', padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '8px' }}
+        >
+          <i id="forecast-refresh-icon" className="fa-solid fa-arrows-rotate" /> 
+          Refresh Forecast Model
+        </button>
+      </div>
       <div className="filter-row">
         <div className="filter-group">
           <label>Medication SKU:</label>

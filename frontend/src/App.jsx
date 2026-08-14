@@ -11,6 +11,7 @@ import Transfers from './pages/Transfers';
 import Actions from './pages/Actions';
 import Simulation from './pages/Simulation';
 import Explorer from './pages/Explorer';
+import Surge from './pages/Surge';
 import { getSKUs, getDCs, generateForecasts, getRecommendations, DATE } from './api';
 
 function AppContent() {
@@ -49,19 +50,6 @@ function AppContent() {
     document.body.className = nextTheme === 'light' ? 'light-theme' : '';
   }, [theme]);
 
-  const handleRefreshPrediction = useCallback(async () => {
-    showToast('Running prediction models on demand...', 'info');
-    try {
-      await generateForecasts(DATE);
-      await getRecommendations(DATE, true);
-      showToast('Prediction and recommendations updated!', 'success');
-      // Force all page components to re-fetch by remounting
-      setRefreshKey(k => k + 1);
-    } catch (e) {
-      showToast(`Error running prediction: ${e.message}`, 'critical');
-    }
-  }, [showToast]);
-
   // Navigate to a page, optionally pre-setting the Action Center priority filter
   const navigateTo = useCallback((page, opts = {}) => {
     if (opts.actionPriority) setActionPriority(opts.actionPriority);
@@ -82,6 +70,7 @@ function AppContent() {
     case 'actions':     PageComponent = <Actions     {...pageProps} initialPriority={actionPriority} filterSku={actionFilterSku} />; break;
     case 'simulation':  PageComponent = <Simulation  {...pageProps} />; break;
     case 'explorer':    PageComponent = <Explorer    {...pageProps} />; break;
+    case 'surge':       PageComponent = <Surge       {...pageProps} />; break;
     default:            PageComponent = <Overview    {...pageProps} />;
   }
 
@@ -93,7 +82,6 @@ function AppContent() {
           activePage={activePage}
           theme={theme}
           onToggleTheme={toggleTheme}
-          onRefreshPrediction={handleRefreshPrediction}
         />
         <div className="page-container">
           {loading ? (

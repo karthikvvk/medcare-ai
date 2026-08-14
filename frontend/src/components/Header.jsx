@@ -5,6 +5,7 @@ const PAGE_META = {
   forecast:   { title: 'Demand Sensing',             subtitle: 'Forecasting model comparison horizon vs real-time warehouse actuals' },
   inventory:  { title: 'Inventory Status',           subtitle: 'Stock boundaries, safety levels, and storage utilization parameters' },
   expiry:     { title: 'Expiry Management',          subtitle: 'FEFO consumption simulation and value at wastage risk' },
+  surge:      { title: 'Surge Management',           subtitle: 'XGBoost demand surge detection — real-time surge probability scoring and risk classification' },
   replenish:  { title: 'Replenishment Orders',       subtitle: 'MOQ-rounded replenishment suggestions matching safety targets' },
   transfers:  { title: 'Inter-DC Transfers',         subtitle: 'Rebalancing stock from surplus distribution centers to shortage targets' },
   actions:    { title: 'Action Center',              subtitle: 'Operations escalation reviews and automated ERP instructions' },
@@ -28,13 +29,6 @@ export default function Header({ activePage, theme, onToggleTheme, onRefreshPred
           style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border-glass)', color: 'var(--text-primary)', padding: '8px 12px', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', transition: 'var(--transition-smooth)' }}
         >
           <i className={`fa-solid ${theme === 'dark' ? 'fa-moon' : 'fa-sun'}`} />
-        </button>
-        <button
-          className="status-badge"
-          onClick={onRefreshPrediction}
-          style={{ cursor: 'pointer', background: 'transparent', border: '1px solid var(--border-glass)', color: 'var(--text-primary)', fontFamily: 'inherit', fontSize: 'inherit', transition: 'var(--transition-smooth)' }}
-        >
-          <i className="fa-solid fa-arrows-rotate" /> Refresh Prediction
         </button>
       </div>
     </header>

@@ -4,3 +4,7 @@ __pycache__/
 *.db-wal
 output.db
 expiry_related_programs_temp_dir/
+testing_nix/
+dump/
+virtual/
+surge_related_programs_temp_dir/

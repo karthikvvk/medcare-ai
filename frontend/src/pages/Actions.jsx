@@ -41,7 +41,31 @@ export default function Actions({ skus, dcs, initialPriority = 'CRITICAL', filte
 
   return (
     <div className="page card">
-      <h2 className="section-title"><i className="fa-solid fa-shield-halved" /> Action Command Center</h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+        <h2 className="section-title" style={{ margin: 0 }}>
+          <i className="fa-solid fa-shield-halved" /> Action Command Center
+        </h2>
+        <button 
+          className="btn btn-secondary" 
+          onClick={() => {
+            setLoading(true);
+            getRecommendations(DATE, true).then(d => {
+              const activeRecs = d.filter(r => r.action_type !== 'NO_ACTION');
+              setRecs(activeRecs);
+              setLoading(false);
+              showToast('Action recommendations regenerated!', 'success');
+            }).catch(() => {
+              setLoading(false);
+              showToast('Failed to regenerate actions.', 'critical');
+            });
+          }} 
+          disabled={loading}
+          style={{ fontSize: '13px', padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '8px' }}
+        >
+          <i className={`fa-solid fa-arrows-rotate ${loading ? 'fa-spin' : ''}`} /> 
+          {loading ? 'Running...' : 'Refresh Prediction'}
+        </button>
+      </div>
       
       <div className="tabs-container" style={{display:'flex', gap:'12px', marginBottom:'24px'}}>
         {['CRITICAL','HIGH','MEDIUM','LOW'].map(p => (

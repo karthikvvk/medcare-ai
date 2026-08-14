@@ -206,9 +206,20 @@ export default function Expiry({ refreshKey, onNavigate }) {
 
   return (
     <div className="page card">
-      <h2 className="section-title">
-        <i className="fa-solid fa-hourglass-half" /> Expiry Management
-      </h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+        <h2 className="section-title" style={{ margin: 0 }}>
+          <i className="fa-solid fa-hourglass-half" /> Expiry Management
+        </h2>
+        <button 
+          className="btn btn-secondary" 
+          onClick={load} 
+          disabled={loading}
+          style={{ fontSize: '13px', padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '8px' }}
+        >
+          <i className={`fa-solid fa-arrows-rotate ${loading ? 'fa-spin' : ''}`} /> 
+          {loading ? 'Running...' : 'Refresh Prediction'}
+        </button>
+      </div>
 
       {loading ? (
         <div className="loading">

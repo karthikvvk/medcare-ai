@@ -5,7 +5,7 @@ from fastapi.staticfiles import StaticFiles
 import time
 from app.core.config import settings
 from app.core.logging_config import logger
-from app.api import routes_dashboard, routes_forecast, routes_inventory, routes_recommendations
+from app.api import routes_dashboard, routes_forecast, routes_inventory, routes_recommendations, routes_surge
 from app.core.database import engine
 from app.models.database_models import Base
 
@@ -54,6 +54,7 @@ app.include_router(routes_dashboard.router, prefix=settings.API_V1_STR)
 app.include_router(routes_forecast.router, prefix=settings.API_V1_STR)
 app.include_router(routes_inventory.router, prefix=settings.API_V1_STR)
 app.include_router(routes_recommendations.router, prefix=settings.API_V1_STR)
+app.include_router(routes_surge.router, prefix=settings.API_V1_STR)
 
 # Mount dashboard static files (React Build)
 app.mount("/static", StaticFiles(directory="frontend/dist"), name="static")

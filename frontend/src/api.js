@@ -38,3 +38,9 @@ export const runSimulation = (date, body) =>
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   });
+
+// Surge Management
+export const getSurgeSummary = () => apiFetch(`${API_BASE}/surge/summary`);
+export const getSurgePredictions = (riskLevel = null) =>
+  apiFetch(`${API_BASE}/surge/predictions${riskLevel ? `?risk_level=${riskLevel}` : ''}`);
+export const getSurgeTopProducts = () => apiFetch(`${API_BASE}/surge/top-products`);
