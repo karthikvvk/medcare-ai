@@ -21,6 +21,7 @@ function AppContent() {
   const [loading, setLoading] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0); // force page re-mount on refresh
   const [actionPriority, setActionPriority] = useState('CRITICAL'); // deep-link priority for Action Center
+  const [actionFilterSku, setActionFilterSku] = useState(null); // deep-link specific SKU
   const showToast = useToast();
 
   useEffect(() => {
@@ -64,6 +65,7 @@ function AppContent() {
   // Navigate to a page, optionally pre-setting the Action Center priority filter
   const navigateTo = useCallback((page, opts = {}) => {
     if (opts.actionPriority) setActionPriority(opts.actionPriority);
+    if (opts.filterSku !== undefined) setActionFilterSku(opts.filterSku);
     setActivePage(page);
   }, []);
 
@@ -77,7 +79,7 @@ function AppContent() {
     case 'expiry':      PageComponent = <Expiry      {...pageProps} />; break;
     case 'replenish':   PageComponent = <Replenishments {...pageProps} />; break;
     case 'transfers':   PageComponent = <Transfers   {...pageProps} />; break;
-    case 'actions':     PageComponent = <Actions     {...pageProps} initialPriority={actionPriority} />; break;
+    case 'actions':     PageComponent = <Actions     {...pageProps} initialPriority={actionPriority} filterSku={actionFilterSku} />; break;
     case 'simulation':  PageComponent = <Simulation  {...pageProps} />; break;
     case 'explorer':    PageComponent = <Explorer    {...pageProps} />; break;
     default:            PageComponent = <Overview    {...pageProps} />;

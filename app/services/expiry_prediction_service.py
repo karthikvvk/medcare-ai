@@ -421,8 +421,7 @@ def _build_warehouse_cards(predictions: list, dc_cache: dict) -> list:
     for dc_id, d in dc_map.items():
         # Only surface warehouses that have at least one non-LOW batch
         if d["worst_risk_level"] == "LOW" and d["critical_batches"] == 0 and d["high_batches"] == 0 and d["watch_batches"] == 0:
-            # Still include it but mark as safe
-            pass
+            continue
         result.append({
             "dc_id": d["dc_id"],
             "dc_name": d["dc_name"],

@@ -3,106 +3,6 @@ import { getExpiryPredictions } from '../api';
 import Badge from '../components/Badge';
 
 /* ─────────────────────────────────────────────
-   Suggestion Banner (no internal UI — wires to Action Center)
-───────────────────────────────────────────── */
-function SuggestionBanner({ tier, suggestion, onNavigate }) {
-  if (!suggestion) return null;
-
-  const tierMeta = {
-    CRITICAL: {
-      border: 'var(--accent-rose)',
-      bg: 'rgba(244,63,94,0.07)',
-      actionPriority: 'CRITICAL',
-      icon: '🚨',
-      label: 'CRITICAL',
-    },
-    HIGH: {
-      border: 'var(--accent-orange)',
-      bg: 'rgba(249,115,22,0.07)',
-      actionPriority: 'HIGH',
-      icon: '⚠️',
-      label: 'HIGH RISK',
-    },
-    WATCH: {
-      border: 'var(--accent-yellow)',
-      bg: 'rgba(245,158,11,0.07)',
-      actionPriority: 'HIGH',   // WATCH maps to HIGH tab in Action Center
-      icon: '👁️',
-      label: 'WATCH',
-    },
-  };
-  const meta = tierMeta[tier] || tierMeta.WATCH;
-
-  return (
-    <div style={{
-      border: `1.5px solid ${meta.border}`,
-      borderRadius: '12px',
-      background: meta.bg,
-      padding: '16px 20px',
-      marginBottom: '24px',
-      display: 'flex',
-      alignItems: 'center',
-      gap: '16px',
-      flexWrap: 'wrap',
-    }}>
-      {/* Label pill */}
-      <div style={{
-        background: meta.border,
-        color: '#fff',
-        fontSize: '10px',
-        fontWeight: 700,
-        padding: '4px 12px',
-        borderRadius: '20px',
-        letterSpacing: '0.08em',
-        textTransform: 'uppercase',
-        flexShrink: 0,
-      }}>
-        {meta.icon} AI Suggestion · {meta.label}
-      </div>
-
-      {/* Status text */}
-      <div style={{
-        fontSize: '13px',
-        color: 'var(--text-primary)',
-        fontWeight: 500,
-        lineHeight: 1.5,
-        flex: 1,
-        minWidth: '200px',
-      }}>
-        {suggestion.status}
-      </div>
-
-      {/* CTA — navigate to Action Center */}
-      <button
-        onClick={() => onNavigate('actions', { actionPriority: meta.actionPriority })}
-        style={{
-          padding: '9px 20px',
-          borderRadius: '9px',
-          border: `1.5px solid ${meta.border}`,
-          background: `${meta.border}22`,
-          color: meta.border,
-          fontWeight: 700,
-          fontSize: '13px',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          whiteSpace: 'nowrap',
-          flexShrink: 0,
-          transition: 'background 0.15s',
-        }}
-        onMouseEnter={e => e.currentTarget.style.background = `${meta.border}44`}
-        onMouseLeave={e => e.currentTarget.style.background = `${meta.border}22`}
-      >
-        <i className="fa-solid fa-shield-halved" />
-        View Suggestion in Action Center
-        <i className="fa-solid fa-arrow-right" style={{ fontSize: '11px' }} />
-      </button>
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────
    Warehouse Risk Card
 ───────────────────────────────────────────── */
 function WarehouseCard({ wh }) {
@@ -190,7 +90,7 @@ function WarehouseCard({ wh }) {
 /* ─────────────────────────────────────────────
    Inventory Table (per tier)
 ───────────────────────────────────────────── */
-function TierTable({ items }) {
+function TierTable({ items, onNavigate }) {
   if (!items || items.length === 0) {
     return (
       <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)', fontSize: '14px' }}>
@@ -258,8 +158,15 @@ function TierTable({ items }) {
                 </div>
               </td>
               <td><Badge label={r.expiry_risk} /></td>
-              <td style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
-                {r.recommended_action.replace(/_/g, ' ')}
+              <td>
+                <button
+                  onClick={() => onNavigate('actions', { actionPriority: r.expiry_risk === 'WATCH' ? 'HIGH' : r.expiry_risk, filterSku: r.sku_id })}
+                  className="btn btn-primary"
+                  style={{ padding: '6px 10px', fontSize: '11px' }}
+                >
+                  <i className="fa-solid fa-lightbulb" style={{ marginRight: '6px' }} />
+                  View Suggestion
+                </button>
               </td>
             </tr>
           ))}
@@ -310,7 +217,7 @@ export default function Expiry({ refreshKey, onNavigate }) {
       ) : (
         <>
           {/* ── KPI Cards ── */}
-          <div className="grid-3" style={{ marginBottom: '28px' }}>
+          <div className="grid-3" style={{ marginBottom: '28px', gridTemplateColumns: '1fr 1fr' }}>
             <div className="card metric-card">
               <div className="metric-title">Total Projected Loss</div>
               <div className="metric-value" style={{ color: 'var(--accent-orange)' }}>
@@ -319,18 +226,13 @@ export default function Expiry({ refreshKey, onNavigate }) {
               <div className="metric-delta delta-warn">Model estimated write-off</div>
             </div>
             <div className="card metric-card">
-              <div className="metric-title">Critical Batches</div>
-              <div className="metric-value" style={{ color: 'var(--accent-rose)' }}>
-                {summary.critical_count || 0}
+              <div className="metric-title">Risk Batches Overview</div>
+              <div className="metric-value" style={{ fontSize: '20px', display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                <span style={{ color: 'var(--accent-rose)' }}>🔴 {summary.critical_count || 0} Critical</span>
+                <span style={{ color: 'var(--accent-orange)' }}>🟠 {summary.high_count || 0} High</span>
+                <span style={{ color: 'var(--text-secondary)' }}>🟢 {summary.low_count || 0} Low</span>
               </div>
-              <div className="metric-delta delta-neg">Urgent action required</div>
-            </div>
-            <div className="card metric-card">
-              <div className="metric-title">Under Surveillance</div>
-              <div className="metric-value">
-                {(summary.high_count || 0) + (summary.watch_count || 0)} Batches
-              </div>
-              <div className="metric-delta delta-info">High + Watch tier</div>
+              <div className="metric-delta delta-neg">Model identified risks</div>
             </div>
           </div>
 
@@ -392,13 +294,6 @@ export default function Expiry({ refreshKey, onNavigate }) {
           {/* ── Active Tab Content ── */}
           {activeTabData && (
             <div>
-              {/* Suggestion banner — wires to Action Center */}
-              <SuggestionBanner
-                tier={activeTabData.tier}
-                suggestion={activeTabData.suggestion}
-                onNavigate={onNavigate}
-              />
-
               {/* Inventory Table */}
               <div style={{ background: 'var(--surface)', borderRadius: '12px', border: '1px solid var(--border)', overflow: 'hidden' }}>
                 <div style={{ padding: '14px 20px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -409,7 +304,7 @@ export default function Expiry({ refreshKey, onNavigate }) {
                     {activeTabData.items.length} batch(es) · sorted by risk score ↓
                   </span>
                 </div>
-                <TierTable items={activeTabData.items} />
+                <TierTable items={activeTabData.items} onNavigate={onNavigate} />
               </div>
             </div>
           )}

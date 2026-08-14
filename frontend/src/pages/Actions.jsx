@@ -9,7 +9,7 @@ const gridColor = () => isLight() ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.04)
 const tickColor = () => isLight() ? '#475569' : '#94a3b8';
 const legendColor = () => isLight() ? '#0f172a' : '#f8fafc';
 
-export default function Actions({ skus, dcs, initialPriority = 'CRITICAL' }) {
+export default function Actions({ skus, dcs, initialPriority = 'CRITICAL', filterSku = null }) {
   const [recs, setRecs] = useState([]);
   const [priority, setPriority] = useState(initialPriority);
   const [loading, setLoading] = useState(true);
@@ -19,14 +19,23 @@ export default function Actions({ skus, dcs, initialPriority = 'CRITICAL' }) {
   const loadData = () => {
     setLoading(true);
     getRecommendations().then(d => {
-      setRecs(d.filter(r => r.action_type !== 'NO_ACTION'));
+      const activeRecs = d.filter(r => r.action_type !== 'NO_ACTION');
+      setRecs(activeRecs);
       setLoading(false);
+      
+      // Auto drill-down if a filterSku is provided
+      if (filterSku) {
+        const matchingRec = activeRecs.find(r => r.sku_id === filterSku);
+        if (matchingRec) {
+          setDrilldown(matchingRec);
+        }
+      }
     }).catch(() => setLoading(false));
   };
 
-  useEffect(() => { loadData(); }, []);
+  useEffect(() => { loadData(); }, [filterSku]);
 
-  if (drilldown) return <ActionDetail rec={drilldown} skus={skus} dcs={dcs} onBack={() => setDrilldown(null)} onStatusUpdate={loadData} />;
+  if (drilldown) return <ActionDetail rec={drilldown} skus={skus} dcs={dcs} onBack={() => { setDrilldown(null); }} onStatusUpdate={loadData} />;
 
   const filtered = recs.filter(r => r.priority === priority);
 
