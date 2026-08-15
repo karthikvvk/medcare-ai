@@ -1,0 +1,6 @@
+supplier_id,name,reliability_score
+SUP001,PharmaCorp Industries,0.96
+SUP002,Apex BioLabs,0.94
+SUP003,Global Pharma Ltd,0.89
+SUP004,MediSolutions Inc,0.97
+SUP005,Zenith Therapeutics,0.92

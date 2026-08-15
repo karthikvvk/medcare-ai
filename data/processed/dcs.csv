@@ -1,0 +1,9 @@
+dc_id,name,location,region,storage_capacity,lead_time_days,service_priority
+DC001,Chennai DC,Chennai,South,50000,5,1
+DC002,Bangalore DC,Bangalore,South,45000,4,2
+DC003,Hyderabad DC,Hyderabad,South,40000,4,2
+DC004,Mumbai DC,Mumbai,West,60000,6,1
+DC005,Delhi DC,Delhi,North,55000,7,1
+DC006,Kolkata DC,Kolkata,East,35000,8,3
+DC007,Pune DC,Pune,West,30000,5,3
+DC008,Ahmedabad DC,Ahmedabad,West,35000,6,3
