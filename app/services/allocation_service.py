@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from app.core.logging_config import logger
 from app.models.database_models import SKU, DistributionCenter, Batch, Transfer, Recommendation
 from app.services.inventory_service import InventoryService
@@ -165,6 +165,7 @@ class AllocationService:
                     
                     rec_obj = Recommendation(
                         recommendation_id=rec_id,
+                        timestamp=datetime.utcnow(),
                         sku_id=sku_id,
                         dc_id=dest_dc_id,
                         action_type="TRANSFER",

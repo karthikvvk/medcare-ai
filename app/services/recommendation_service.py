@@ -128,6 +128,7 @@ class RecommendationService:
                     rec_id = f"REC-RP-{uuid.uuid4().hex[:6].upper()}"
                     rec_obj = Recommendation(
                         recommendation_id=rec_id,
+                        timestamp=datetime.utcnow(),
                         sku_id=sku_id,
                         dc_id=dc_id,
                         action_type=action_type,
@@ -162,6 +163,7 @@ class RecommendationService:
                     
                     rec_obj = Recommendation(
                         recommendation_id=rec_id,
+                        timestamp=datetime.utcnow(),
                         sku_id=sku_id,
                         dc_id=dc_id,
                         action_type="REDUCE_ORDER" if rep["days_to_expiry"] > 14 else "MONITOR",

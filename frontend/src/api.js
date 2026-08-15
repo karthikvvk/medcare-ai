@@ -44,3 +44,19 @@ export const getSurgeSummary = () => apiFetch(`${API_BASE}/surge/summary`);
 export const getSurgePredictions = (riskLevel = null) =>
   apiFetch(`${API_BASE}/surge/predictions${riskLevel ? `?risk_level=${riskLevel}` : ''}`);
 export const getSurgeTopProducts = () => apiFetch(`${API_BASE}/surge/top-products`);
+
+export const setLiveScenarioMode = (mode) => apiFetch(`${API_BASE}/live-scenario/mode?mode=${mode}`, { method: 'POST' });
+export const getLiveNewsHeadlines = () => apiFetch(`${API_BASE}/live-scenario/news`);
+export const extractScenarioFromNews = () => apiFetch(`${API_BASE}/live-scenario/news-extract`, { method: 'POST' });
+export const getLiveScenarioStatus = (date = DATE) => apiFetch(`${API_BASE}/live-scenario/status?date_str=${date}`);
+export const simulateLiveScenario = (body) =>
+  apiFetch(`${API_BASE}/live-scenario/simulate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+export const resetLiveScenario = () => apiFetch(`${API_BASE}/live-scenario/reset`, { method: 'POST' });
+export const analyzeLiveScenario = (date = DATE) => apiFetch(`${API_BASE}/live-scenario/analyze?date_str=${date}`, { method: 'POST' });
+export const commitLiveScenarioRecommendations = () => apiFetch(`${API_BASE}/live-scenario/commit`, { method: 'POST' });
+export const checkOllamaStatus = () => apiFetch(`${API_BASE}/live-scenario/ollama-status`);
+export const pullOllamaModel = () => apiFetch(`${API_BASE}/live-scenario/ollama-pull`, { method: 'POST' });

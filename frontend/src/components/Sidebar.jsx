@@ -10,6 +10,7 @@ const MENU_ITEMS = [
   { id: 'transfers',    icon: 'fa-right-left',       label: 'Inter-DC Transfers' },
   { id: 'actions',      icon: 'fa-shield-halved',    label: 'Action Center' },
   { id: 'simulation',   icon: 'fa-flask',            label: 'What-If Simulation' },
+  { id: 'live-scenario', icon: 'fa-triangle-exclamation', label: 'Live AI Scenario' },
   { id: 'explorer',     icon: 'fa-database',         label: 'Data Explorer' },
 ];
 

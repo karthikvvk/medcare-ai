@@ -20,6 +20,8 @@ class Settings(BaseSettings):
     # LLM Settings
     LLM_PROVIDER: str = "openai"
     LLM_API_KEY: Optional[str] = None
+    OLLAMA_HOST: str = "http://localhost:11434"
+    OLLAMA_MODEL: str = "llama3.2"
 
     # API Base URL
     API_BASE_URL: str = "http://localhost:8000"

@@ -12,6 +12,7 @@ import Actions from './pages/Actions';
 import Simulation from './pages/Simulation';
 import Explorer from './pages/Explorer';
 import Surge from './pages/Surge';
+import LiveScenario from './pages/LiveScenario';
 import { getSKUs, getDCs, generateForecasts, getRecommendations, DATE } from './api';
 
 function AppContent() {
@@ -69,6 +70,7 @@ function AppContent() {
     case 'transfers':   PageComponent = <Transfers   {...pageProps} />; break;
     case 'actions':     PageComponent = <Actions     {...pageProps} initialPriority={actionPriority} filterSku={actionFilterSku} />; break;
     case 'simulation':  PageComponent = <Simulation  {...pageProps} />; break;
+    case 'live-scenario': PageComponent = <LiveScenario {...pageProps} />; break;
     case 'explorer':    PageComponent = <Explorer    {...pageProps} />; break;
     case 'surge':       PageComponent = <Surge       {...pageProps} />; break;
     default:            PageComponent = <Overview    {...pageProps} />;

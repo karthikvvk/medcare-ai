@@ -8,3 +8,7 @@ testing_nix/
 dump/
 virtual/
 surge_related_programs_temp_dir/
+.venv/
+.env
+*.db
+*.log
