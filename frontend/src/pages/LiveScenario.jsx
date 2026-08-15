@@ -233,7 +233,7 @@ export default function LiveScenario() {
 
   const isOllamaHealthy = ollamaStatus?.is_connected;
   const isModelReady = ollamaStatus?.is_model_available;
-  const targetModelName = ollamaStatus?.target_model || 'llama3.2';
+  const targetModelName = ollamaStatus?.model || 'llama3.2';
   const pullProgress = ollamaStatus?.pull_status;
   const primaryRegion = activeScenario?.region || 'Chennai';
 
@@ -246,14 +246,14 @@ export default function LiveScenario() {
           <i className={`fa-solid ${isOllamaHealthy ? 'fa-network-wired' : 'fa-triangle-exclamation'}`} style={{ fontSize: '24px', color: isOllamaHealthy ? (isModelReady ? 'var(--accent-emerald)' : 'var(--accent-amber)') : 'var(--accent-rose)' }} />
           <div>
             <h4 style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
-              Ollama Local AI Engine: {isOllamaHealthy ? 'Connected' : 'Offline'}
+              Ollama Cloud AI Engine: {isOllamaHealthy ? 'Connected' : 'Offline'}
             </h4>
             <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
               {isOllamaHealthy 
                 ? (isModelReady 
-                    ? `Model "${targetModelName}" is active for News Extraction and Live forecasting.` 
-                    : `Ollama is connected, but model "${targetModelName}" is not pulled.`)
-                : `Run 'ollama serve' on your system. Using deterministic clinical fallback metrics.`
+                    ? `Model "${targetModelName}" is active on Ollama Cloud for News Extraction and Live forecasting.` 
+                    : `Ollama Cloud is connected, but model "${targetModelName}" is not available on your plan.`)
+                : `Ollama Cloud API key not set or unreachable. Using deterministic clinical fallback metrics.`
               }
             </p>
           </div>

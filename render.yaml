@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: medcare-ai
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    region: singapore          # Change to: oregon | frankfurt | ohio | virginia
+    plan: starter              # starter | standard | pro
+
+    # Health check — FastAPI root
+    healthCheckPath: /api/health
+
+    envVars:
+      - key: DATABASE_URL
+        value: sqlite:///./medcare_pharma.db   # swap with Render Postgres URL if needed
+
+      - key: OLLAMA_HOST
+        value: https://ollama.com              # Ollama's cloud API endpoint
+
+      - key: OLLAMA_MODEL
+        value: llama3.2                        # must exist in https://ollama.com/library
+
+      - key: OLLAMA_API_KEY
+        sync: false                            # ← inject as a secret in Render dashboard
+
+      - key: API_BASE_URL
+        value: https://medcare-ai.onrender.com # update after first deploy
+
+    # Persistent disk so SQLite data survives deploys
+    disk:
+      name: medcare-data
+      mountPath: /workspace
+      sizeGB: 1

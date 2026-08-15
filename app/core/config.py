@@ -17,11 +17,10 @@ class Settings(BaseSettings):
     MYSQL_PASSWORD: Optional[str] = None
     MYSQL_DATABASE: Optional[str] = None
 
-    # LLM Settings
-    LLM_PROVIDER: str = "openai"
-    LLM_API_KEY: Optional[str] = None
-    OLLAMA_HOST: str = "http://localhost:11434"
+    # LLM Settings — Ollama Cloud (https://ollama.com)
+    OLLAMA_HOST: str = "https://ollama.com"
     OLLAMA_MODEL: str = "llama3.2"
+    OLLAMA_API_KEY: Optional[str] = None  # from https://ollama.com/settings/keys
 
     # API Base URL
     API_BASE_URL: str = "http://localhost:8000"

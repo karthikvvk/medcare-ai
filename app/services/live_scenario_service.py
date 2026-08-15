@@ -11,96 +11,83 @@ from app.core.logging_config import logger
 from app.models.database_models import SKU, DistributionCenter, InventorySnapshot, Recommendation, Transfer
 from app.services.inventory_service import InventoryService
 
-class OllamaManager:
-    _pull_progress = {}
+class OllamaCloudClient:
+    """
+    Calls the Ollama cloud API (https://ollama.com/api) using the exact same
+    wire format as a local Ollama server, but authenticates with an API key
+    obtained from https://ollama.com/settings/keys.
+    """
 
     @staticmethod
-    def check_status(host: str, model_name: str) -> dict:
-        result = {
-            "is_connected": False,
-            "available_models": [],
-            "target_model": model_name,
-            "is_model_available": False,
-            "pull_status": None
+    def is_available() -> bool:
+        """Returns True when an Ollama cloud API key is configured."""
+        return bool(settings.OLLAMA_API_KEY)
+
+    @staticmethod
+    def check_status() -> dict:
+        """Returns Ollama cloud connectivity status."""
+        available = OllamaCloudClient.is_available()
+        return {
+            "is_connected": available,
+            "host": settings.OLLAMA_HOST,
+            "model": settings.OLLAMA_MODEL,
+            "is_model_available": available,
         }
+
+    @staticmethod
+    def generate(prompt: str, temperature: float = 0.2) -> str | None:
+        """
+        Posts to the Ollama cloud /api/chat endpoint.
+        Returns the assistant message content string on success, None on failure.
+        Callers fall back to the deterministic heuristics engine on None.
+
+        NOTE: Ollama Cloud exposes /api/chat (not /api/generate) and requires
+        the messages-array payload. The response is in message.content.
+        """
+        if not OllamaCloudClient.is_available():
+            logger.warning("Ollama Cloud: OLLAMA_API_KEY is not set — skipping LLM call.")
+            return None
         try:
-            res = requests.get(f"{host}/api/tags", timeout=2)
+            headers = {
+                "Authorization": f"Bearer {settings.OLLAMA_API_KEY}",
+                "Content-Type": "application/json",
+            }
+            payload = {
+                "model": settings.OLLAMA_MODEL,
+                "messages": [
+                    {
+                        "role": "system",
+                        "content": "You are a helpful assistant. Always respond with valid JSON only — no markdown, no explanation, no extra text.",
+                    },
+                    {"role": "user", "content": prompt},
+                ],
+                "stream": False,
+                "options": {"temperature": temperature},
+            }
+            res = requests.post(
+                f"{settings.OLLAMA_HOST}/api/chat",
+                headers=headers,
+                json=payload,
+                timeout=60,
+            )
             if res.status_code == 200:
-                result["is_connected"] = True
-                data = res.json()
-                models = [m["name"] for m in data.get("models", [])]
-                result["available_models"] = models
-                
-                model_matches = False
-                for m in models:
-                    if m == model_name or m.startswith(model_name + ":") or model_name.startswith(m + ":"):
-                        model_matches = True
-                        break
-                result["is_model_available"] = model_matches
-        except Exception:
-            pass
+                content = res.json().get("message", {}).get("content")
+                logger.info(f"Ollama Cloud responded successfully (model={settings.OLLAMA_MODEL})")
+                return content
+            else:
+                logger.warning(
+                    f"Ollama Cloud returned HTTP {res.status_code} for model '{settings.OLLAMA_MODEL}': {res.text[:300]}"
+                )
+                return None
+        except Exception as e:
+            logger.warning(f"Ollama Cloud request failed: {e}")
+            return None
 
-        if model_name in OllamaManager._pull_progress:
-            result["pull_status"] = OllamaManager._pull_progress[model_name]
-            
-        return result
 
-    @staticmethod
-    def start_pull(host: str, model_name: str):
-        if model_name in OllamaManager._pull_progress:
-            prog = OllamaManager._pull_progress[model_name]
-            if prog["status"] == "downloading":
-                return
+# Alias used by routes_live_scenario.py
+OllamaManager = OllamaCloudClient
+CloudLLMClient = OllamaCloudClient
 
-        OllamaManager._pull_progress[model_name] = {
-            "status": "downloading",
-            "progress": 0.0,
-            "message": "Starting pull request..."
-        }
-
-        def _pull_worker():
-            try:
-                res = requests.post(f"{host}/api/pull", json={"name": model_name}, stream=True, timeout=600)
-                if res.status_code != 200:
-                    OllamaManager._pull_progress[model_name] = {
-                        "status": "error",
-                        "progress": 0.0,
-                        "message": f"Failed to download: HTTP {res.status_code}"
-                    }
-                    return
-
-                for line in res.iter_lines():
-                    if line:
-                        chunk = json.loads(line.decode('utf-8'))
-                        status = chunk.get("status", "")
-                        completed = chunk.get("completed", 0)
-                        total = chunk.get("total", 0)
-                        
-                        if total > 0:
-                            pct = round((completed / total) * 100, 1)
-                        else:
-                            pct = 0.0
-                            
-                        OllamaManager._pull_progress[model_name] = {
-                            "status": "downloading",
-                            "progress": pct,
-                            "message": status
-                        }
-                
-                OllamaManager._pull_progress[model_name] = {
-                    "status": "success",
-                    "progress": 100.0,
-                    "message": "Model pulled successfully!"
-                }
-            except Exception as e:
-                logger.error(f"Error pulling model {model_name}: {e}")
-                OllamaManager._pull_progress[model_name] = {
-                    "status": "error",
-                    "progress": 0.0,
-                    "message": f"Download interrupted: {str(e)}"
-                }
-
-        threading.Thread(target=_pull_worker, daemon=True).start()
 
 
 class LiveScenarioService:
@@ -378,10 +365,9 @@ class LiveScenarioService:
 
     def extract_scenario_from_news(self, db: Session) -> dict:
         headlines = self.get_fetched_news()
-        logger.info(f"Extracting scenario from {len(headlines)} headlines using Ollama...")
-        ollama_status = OllamaManager.check_status(settings.OLLAMA_HOST, settings.OLLAMA_MODEL)
-        
-        if ollama_status["is_connected"] and ollama_status["is_model_available"]:
+        logger.info(f"Extracting scenario from {len(headlines)} headlines using cloud LLM ({settings.OLLAMA_MODEL})...")
+
+        if CloudLLMClient.is_available():
             try:
                 news_snippet = "\n".join([f"- {h['title']} ({h['pub_date']})" for h in headlines])
                 prompt = (
@@ -398,29 +384,18 @@ class LiveScenarioService:
                     f"}}\n"
                 )
 
-                res = requests.post(
-                    f"{settings.OLLAMA_HOST}/api/generate",
-                    json={
-                        "model": settings.OLLAMA_MODEL,
-                        "prompt": prompt,
-                        "format": "json",
-                        "stream": False,
-                        "options": {"temperature": 0.1}
-                    },
-                    timeout=15
-                )
-                
-                if res.status_code == 200:
-                    parsed = json.loads(res.json().get("response", ""))
+                raw = CloudLLMClient.generate(prompt, temperature=0.1)
+                if raw:
+                    parsed = json.loads(raw)
                     region_val = parsed.get("region", "Chennai").strip()
                     if region_val.lower() not in self.DC_MAPPING:
                         parsed["region"] = "Chennai"
-                        
+
                     type(self)._news_scenario = parsed
                     logger.info(f"AI extracted news scenario: {parsed}")
                     return parsed
             except Exception as e:
-                logger.warning(f"Ollama news extraction failed: {e}. Falling back to rule-based parser.")
+                logger.warning(f"Cloud LLM news extraction failed: {e}. Falling back to rule-based parser.")
 
         logger.info("Executing rule-based news scenario extractor...")
         event = "Seasonal Outbreak"
@@ -494,18 +469,17 @@ class LiveScenarioService:
         # 1. Fetch SKUs list
         skus = db.query(SKU).all()
 
-        # 2. Check Ollama connection status for primary DC
-        ollama_status = OllamaManager.check_status(settings.OLLAMA_HOST, settings.OLLAMA_MODEL)
+        # 2. Check cloud LLM availability
         analysis_mode = "FALLBACK_MOCK"
-        
+
         # We will retrieve primary SKU category surges
-        primary_surges = {} # sku_id -> {increase_pct, priority, rationale}
+        primary_surges = {}  # sku_id -> {increase_pct, priority, rationale}
         health_risks = []
         general_recs = "Deploy emergency supplies and coordinate distribution with surrounding zones."
 
-        if ollama_status["is_connected"] and ollama_status["is_model_available"]:
+        if CloudLLMClient.is_available():
             try:
-                # Gather inventory details at primary DC to provide Ollama context
+                # Gather inventory details at primary DC to provide LLM context
                 inv_context = []
                 for s in skus[:12]:
                     stat = self.inventory_service.get_inventory_status(db, s.sku_id, primary_dc_id, current_date)
@@ -545,32 +519,21 @@ class LiveScenarioService:
                     f"}}\n"
                 )
 
-                res = requests.post(
-                    f"{settings.OLLAMA_HOST}/api/generate",
-                    json={
-                        "model": settings.OLLAMA_MODEL,
-                        "prompt": prompt,
-                        "format": "json",
-                        "stream": False,
-                        "options": {"temperature": 0.2}
-                    },
-                    timeout=15
-                )
-                
-                if res.status_code == 200:
-                    parsed = json.loads(res.json().get("response", ""))
+                raw = CloudLLMClient.generate(prompt, temperature=0.2)
+                if raw:
+                    parsed = json.loads(raw)
                     health_risks = parsed.get("health_risks", [])
                     general_recs = parsed.get("general_recommendations", general_recs)
-                    
+
                     for item in parsed.get("sku_impacts", []):
                         primary_surges[item["sku_id"]] = {
                             "demand_increase_pct": float(item.get("demand_increase_pct", 0.0)),
                             "priority": str(item.get("priority", "LOW")).upper(),
                             "rationale": str(item.get("rationale", ""))
                         }
-                    analysis_mode = "OLLAMA_LLM"
+                    analysis_mode = "CLOUD_LLM"
             except Exception as e:
-                logger.warning(f"Ollama run failed: {e}. Reverting to rule engine.")
+                logger.warning(f"Cloud LLM run failed: {e}. Reverting to rule engine.")
 
         # Fallback heuristic surge initialization
         if not primary_surges:
@@ -688,7 +651,7 @@ class LiveScenarioService:
             "region_recommendations": region_recommendations,
             "general_recommendations": general_recs,
             "analysis_mode": analysis_mode,
-            "model_used": settings.OLLAMA_MODEL if analysis_mode == "OLLAMA_LLM" else "Deterministic Heuristics Engine"
+            "model_used": settings.OLLAMA_MODEL if analysis_mode == "CLOUD_LLM" else "Deterministic Heuristics Engine"
         }
         
         type(self)._last_analysis_results = results
