@@ -48,13 +48,14 @@ def check_dependencies():
 
 def run_all():
     check_dependencies()
-    print("\nStarting MedCare Control Tower Services...")
-    print("Starting FastAPI Backend & Web Dashboard on http://localhost:8000...")
+    
+    port = os.environ.get("PORT", "8000")
+    print(f"Starting FastAPI Backend & Web Dashboard on http://0.0.0.0:{port}...")
     
     try:
         # Run FastAPI in the foreground directly
         subprocess.run(
-            [sys.executable, "-m", "uvicorn", "app.api.main:app", "--host", "0.0.0.0", "--port", "8000"],
+            [sys.executable, "-m", "uvicorn", "app.api.main:app", "--host", "0.0.0.0", "--port", port],
             check=True
         )
     except KeyboardInterrupt:

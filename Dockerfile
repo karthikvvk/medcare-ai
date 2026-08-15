@@ -1,3 +1,12 @@
+# Stage 1: Build Frontend
+FROM node:20-slim AS frontend-builder
+WORKDIR /app/frontend
+COPY frontend/package*.json ./
+RUN npm install
+COPY frontend/ .
+RUN npm run build
+
+# Stage 2: Final Python Image
 FROM python:3.11-slim
 
 WORKDIR /workspace
@@ -12,12 +21,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy codebase
+# Copy backend codebase
 COPY . .
 
-# Expose ports for API (8000) and Streamlit Dashboard (8501)
-EXPOSE 8000
-EXPOSE 8501
+# Copy built frontend from Stage 1
+COPY --from=frontend-builder /app/frontend/dist /workspace/frontend/dist
 
-# Default command runs checks, then starts services (or overridden in compose)
+# Expose port (Render overrides this with $PORT at runtime, but good to keep)
+EXPOSE 8000
+
+# Start services
 CMD ["python", "run.py"]
