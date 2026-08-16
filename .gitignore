@@ -12,3 +12,4 @@ surge_related_programs_temp_dir/
 .env
 *.db
 *.log
+*.txt
