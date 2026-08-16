@@ -7644,3 +7644,36 @@ fastapi.exceptions.ResponseValidationError: 409 validation errors:
 2026-08-16 15:14:15,356 [INFO] medcare: Endpoint /api/inventory/expiry-risks served in 3.0786s
 2026-08-16 15:14:17,696 [INFO] medcare: Endpoint /api/inventory/status served in 8.0499s
 2026-08-16 15:14:20,278 [INFO] medcare: Endpoint /api/inventory/status served in 2.5768s
+2026-08-16 16:03:39,824 [INFO] medcare: Endpoint /api/dashboard/distribution-centers served in 0.0053s
+2026-08-16 16:03:39,828 [INFO] medcare: Endpoint /api/dashboard/skus served in 0.0130s
+2026-08-16 16:03:39,847 [INFO] medcare: Endpoint /api/dashboard/distribution-centers served in 0.0110s
+2026-08-16 16:03:39,854 [INFO] medcare: Endpoint /api/dashboard/skus served in 0.0118s
+2026-08-16 16:03:39,973 [INFO] medcare: Endpoint /api/recommendations served in 0.1007s
+2026-08-16 16:03:40,161 [INFO] medcare: Endpoint /api/recommendations served in 0.1796s
+2026-08-16 16:03:41,667 [INFO] medcare: Endpoint /api/dashboard/summary served in 1.7952s
+2026-08-16 16:03:41,696 [INFO] medcare: Endpoint /api/inventory/expiry-risks served in 1.8205s
+2026-08-16 16:03:43,538 [INFO] medcare: Endpoint /api/dashboard/summary served in 1.8388s
+2026-08-16 16:03:43,539 [INFO] medcare: Endpoint /api/inventory/expiry-risks served in 1.8304s
+2026-08-16 16:03:45,758 [INFO] medcare: Endpoint /api/inventory/status served in 5.8852s
+2026-08-16 16:03:48,255 [INFO] medcare: Endpoint /api/inventory/status served in 2.4926s
+2026-08-16 16:03:50,719 [INFO] medcare: Running ExpiryPredictionService for date=2026-08-12
+2026-08-16 16:03:51,166 [INFO] medcare: ExpiryPredictionService complete: CRITICAL=2, HIGH=2, WATCH=2, LOW=605
+2026-08-16 16:03:51,199 [INFO] medcare: Endpoint /api/inventory/expiry-predictions served in 0.4818s
+2026-08-16 16:03:51,206 [INFO] medcare: Running ExpiryPredictionService for date=2026-08-12
+2026-08-16 16:03:51,647 [INFO] medcare: ExpiryPredictionService complete: CRITICAL=2, HIGH=2, WATCH=2, LOW=605
+2026-08-16 16:03:51,716 [INFO] medcare: Endpoint /api/inventory/expiry-predictions served in 0.5110s
+2026-08-16 16:03:53,401 [INFO] medcare: Endpoint /api/surge/top-products served in 0.0032s
+2026-08-16 16:03:53,402 [INFO] medcare: Endpoint /api/surge/summary served in 0.0043s
+2026-08-16 16:03:53,403 [INFO] medcare: Endpoint /api/surge/predictions served in 0.0034s
+2026-08-16 16:03:53,417 [INFO] medcare: Endpoint /api/surge/predictions served in 0.0025s
+2026-08-16 16:03:53,418 [INFO] medcare: Endpoint /api/surge/top-products served in 0.0052s
+2026-08-16 16:03:53,419 [INFO] medcare: Endpoint /api/surge/summary served in 0.0063s
+2026-08-16 16:04:56,104 [INFO] medcare: Running ExpiryPredictionService for date=2026-08-12
+2026-08-16 16:04:56,557 [INFO] medcare: ExpiryPredictionService complete: CRITICAL=2, HIGH=2, WATCH=2, LOW=605
+2026-08-16 16:04:56,638 [INFO] medcare: Endpoint /api/inventory/expiry-predictions served in 0.5362s
+2026-08-16 16:04:56,652 [INFO] medcare: Running ExpiryPredictionService for date=2026-08-12
+2026-08-16 16:04:57,136 [INFO] medcare: ExpiryPredictionService complete: CRITICAL=2, HIGH=2, WATCH=2, LOW=605
+2026-08-16 16:04:57,185 [INFO] medcare: Endpoint /api/inventory/expiry-predictions served in 0.5348s
+2026-08-16 16:04:58,133 [INFO] medcare: Running ExpiryPredictionService for date=2026-08-12
+2026-08-16 16:04:58,595 [INFO] medcare: ExpiryPredictionService complete: CRITICAL=2, HIGH=2, WATCH=2, LOW=605
+2026-08-16 16:04:58,630 [INFO] medcare: Endpoint /api/inventory/expiry-predictions served in 0.4999s
