@@ -1,5 +1,5 @@
 assets/
-__pycache__/
+**/__pycache__/
 *.db-shm
 *.db-wal
 output.db
@@ -13,3 +13,4 @@ surge_related_programs_temp_dir/
 *.db
 *.log
 *.txt
+*.pyc

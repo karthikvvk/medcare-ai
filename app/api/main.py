@@ -57,15 +57,23 @@ app.include_router(routes_recommendations.router, prefix=settings.API_V1_STR)
 app.include_router(routes_surge.router, prefix=settings.API_V1_STR)
 app.include_router(routes_live_scenario.router, prefix=settings.API_V1_STR)
 
-# Mount dashboard static files (React Build)
-app.mount("/static", StaticFiles(directory="frontend/dist"), name="static")
-# Vite puts assets in /assets by default, so we may want to mount that too for convenience,
-# or better yet just mount the whole dist folder. But Vite index.html references /assets/...
-app.mount("/assets", StaticFiles(directory="frontend/dist/assets"), name="assets")
+import os
 
-@app.get("/")
-def read_root():
-    return FileResponse("frontend/dist/index.html")
+# Mount dashboard static files (React Build)
+if os.path.exists("frontend/dist"):
+    app.mount("/static", StaticFiles(directory="frontend/dist"), name="static")
+    # Vite puts assets in /assets by default, so we may want to mount that too for convenience,
+    # or better yet just mount the whole dist folder. But Vite index.html references /assets/...
+    if os.path.exists("frontend/dist/assets"):
+        app.mount("/assets", StaticFiles(directory="frontend/dist/assets"), name="assets")
+
+    @app.get("/")
+    def read_root():
+        return FileResponse("frontend/dist/index.html")
+else:
+    @app.get("/")
+    def read_root():
+        return {"message": "Frontend not built. Please run 'npm run build' in the frontend directory or use 'npm run dev' for development."}
 
 if __name__ == "__main__":
     import uvicorn
