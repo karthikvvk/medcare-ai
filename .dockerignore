@@ -14,6 +14,5 @@ venv.bak/
 .env
 *.db
 .git/
-data/
 frontend/node_modules/
 frontend/dist/
