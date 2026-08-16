@@ -212,27 +212,7 @@ function ActionDetail({ rec, skus, dcs, onBack, onStatusUpdate }) {
           </div>
         </div>
 
-        <div className="card" style={{display:'flex', flexDirection:'column', gap:'20px'}}>
-          <h2 className="section-title" style={{marginBottom:0}}><i className="fa-solid fa-chart-line" /> Demand Sensing Forecast</h2>
-          <div className="chart-container" style={{height:'320px'}}>
-            {chartData ? (
-              <Line data={{
-                labels: chartData.labels,
-                datasets: [
-                  { label:'Observed Demand', data:chartData.actualValues, borderColor:'#06b6d4', borderWidth:2.5, fill:false },
-                  { label:'Sensed Demand Forecast', data:chartData.forecastValues, borderColor:'#8b5cf6', borderDash:[4,4], borderWidth:2.5, fill:false },
-                ]
-              }} options={{
-                responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { labels: { color: legendColor() } } },
-                scales: {
-                  x: { grid: { color: gridColor() }, ticks: { color: tickColor() } },
-                  y: { grid: { color: gridColor() }, ticks: { color: tickColor() } },
-                }
-              }} />
-            ) : <div className="loading"><i className="fa-solid fa-circle-notch fa-spin" /> Loading forecast...</div>}
-          </div>
-        </div>
+
       </div>
     </div>
   );

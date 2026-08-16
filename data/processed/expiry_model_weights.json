@@ -1,0 +1,10 @@
+{
+    "model_name": "Expiry Aware Allocation Model",
+    "model_type": "Weighted Risk Scoring",
+    "weights": {
+        "expiry_urgency_score": 0.4,
+        "inventory_pressure_score": 0.35,
+        "coverage_risk_score": 0.25
+    },
+    "formula": "0.40 * expiry_urgency_score + 0.35 * inventory_pressure_score + 0.25 * coverage_risk_score"
+}

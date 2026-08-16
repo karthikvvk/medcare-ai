@@ -25,12 +25,11 @@ from app.core.logging_config import logger
 # its temp dir)
 # ---------------------------------------------------------------------------
 
-_DATA_DIR = os.path.join(os.path.dirname(__file__), "../../data/processed")
-_MODEL_DIR = os.path.join(os.path.dirname(__file__), "../../models")
+_BASE = os.path.join(os.path.dirname(__file__), "../../surge_related_programs_temp_dir")
 
-_PREDICTIONS_CSV  = os.path.join(_DATA_DIR, "surge_predictions.csv")
-_TOP10_JSON       = os.path.join(_DATA_DIR, "top_10_surge_products.json")
-_MODEL_PKL        = os.path.join(_MODEL_DIR, "demand_surge_model.pkl")
+_PREDICTIONS_CSV  = os.path.join(_BASE, "surge_predictions.csv")
+_TOP10_JSON       = os.path.join(_BASE, "top_10_surge_products.json")
+_MODEL_PKL        = os.path.join(_BASE, "demand_surge_model.pkl")
 
 # ---------------------------------------------------------------------------
 # Module-level cache (loaded once per process)

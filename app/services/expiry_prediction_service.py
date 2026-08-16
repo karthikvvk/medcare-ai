@@ -24,7 +24,7 @@ from app.models.database_models import Batch, SKU, DistributionCenter, DemandHis
 
 _WEIGHTS_PATH = os.path.join(
     os.path.dirname(__file__),
-    "../../expiry_related_programs_temp_dir/expiry_model_weights.json"
+    "../../data/processed/expiry_model_weights.json"
 )
 
 def _load_weights() -> dict:
