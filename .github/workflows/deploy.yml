@@ -7,18 +7,17 @@ on:
       - main
 
 env:
-  # GitHub Container Registry (free, no ECR needed)
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}      # e.g. ghcr.io/karthikvvk/medcare-ai
+  IMAGE_NAME: ${{ github.repository }}   # ghcr.io/karthikvvk/medcare-ai
 
 jobs:
-  # --- Job 1: Build & Push Docker Image ----------------------------
+  # ── Job 1: Build & Push to GHCR (free image registry) ──────────
   build-and-push:
     name: Build & Push to GHCR
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write       # needed to push to GHCR
+      packages: write
 
     steps:
       - name: Checkout code
@@ -29,7 +28,7 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}   # auto-provided, no setup needed
+          password: ${{ secrets.GITHUB_TOKEN }}   # auto-provided by GitHub
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
@@ -40,11 +39,11 @@ jobs:
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
-  # --- Job 2: Deploy to EC2 ----------------------------------------
+  # ── Job 2: Deploy to Amazon Linux EC2 ───────────────────────────
   deploy:
     name: Deploy to EC2
     runs-on: ubuntu-latest
-    needs: build-and-push      # waits for image to be pushed first
+    needs: build-and-push
     permissions:
       packages: read
 
@@ -52,32 +51,34 @@ jobs:
       - name: Deploy via SSH to EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host:     ${{ secrets.EC2_HOST }}         # your EC2 Elastic IP
-          username: ${{ secrets.EC2_USER }}         # usually 'ubuntu' or 'ec2-user'
-          key:      ${{ secrets.EC2_SSH_KEY }}      # your EC2 private key (PEM contents)
+          host:     ${{ secrets.EC2_HOST }}      # Elastic IP
+          username: ec2-user                     # Amazon Linux default user
+          key:      ${{ secrets.EC2_SSH_KEY }}   # PEM key contents
+
           script: |
-            # Log in to GHCR on the EC2 machine
+            # Login to GHCR
             echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io \
               -u ${{ github.actor }} --password-stdin
 
-            # Pull the latest image
+            # Pull latest image
             docker pull ghcr.io/${{ github.repository }}:latest
 
-            # Stop and remove the old container (ignore error if not running)
+            # Stop old container gracefully
             docker stop medcare-ai || true
             docker rm   medcare-ai || true
 
-            # Start the new container
-            # /data/medcare is the EBS mount point for SQLite persistence
+            # Start fresh container
+            # /data/medcare = EBS mount for SQLite persistence
             docker run -d \
               --name medcare-ai \
               --restart unless-stopped \
               -p 8000:8000 \
-              -v /data/medcare:/workspace \
-              --env-file /home/ubuntu/medcare.env \
+              -v /data/medcare:/data \
+              --env-file /home/ec2-user/medcare.env \
               ghcr.io/${{ github.repository }}:latest
 
-            # Wait for health check to pass
-            sleep 15
-            curl -sf http://localhost:8000/api/health && echo "Deployment successful" \
-              || echo "Health check failed - check: docker logs medcare-ai"
+            # Health check
+            sleep 20
+            curl -sf http://localhost:8000/api/health \
+              && echo "Deployment successful" \
+              || (echo "Health check failed" && docker logs --tail 30 medcare-ai)

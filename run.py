@@ -34,9 +34,20 @@ def check_dependencies():
         
     # 5. Check if SQLite database exists and is populated
     # If SQLite database file is missing, seed it
-    db_file = "medcare_pharma.db"
+    db_url = os.environ.get("DATABASE_URL", "sqlite:///./medcare_pharma.db")
+    
+    # Extract the file path from the sqlite URL (e.g., sqlite:////data/db.sqlite3 -> /data/db.sqlite3)
+    if db_url.startswith("sqlite:///"):
+        # local relative path
+        db_file = db_url.replace("sqlite:///", "")
+    elif db_url.startswith("sqlite://"):
+        # absolute path
+        db_file = db_url.replace("sqlite://", "")
+    else:
+        db_file = "medcare_pharma.db"
+        
     if not os.path.exists(db_file):
-        print("Database file missing. Seeding database...")
+        print(f"Database file '{db_file}' missing. Seeding database...")
         subprocess.run([sys.executable, "scripts/seed_database.py"], check=True)
         
     # Generate initial forecasts and recommendations in the database for current date 2026-08-12
