@@ -1,4 +1,5 @@
 # MedCare AI — Corrected Deployment Guide
+
 ### Amazon Linux 2023 · EC2 · GHCR · GitHub Actions · Nginx · Certbot · DuckDNS
 
 **Domain:** `https://medcareai.duckdns.org`
@@ -204,11 +205,11 @@ Generate a PAT once: `github.com/settings/tokens` → **Generate new token (clas
 
 In your repo → **Settings → Secrets and variables → Actions**, add:
 
-| Secret | Value |
-|---|---|
-| `EC2_HOST` | `35.154.233.70` |
+| Secret        | Value                                                                                                                                               |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `EC2_HOST`    | `35.154.233.70`                                                                                                                                     |
 | `EC2_SSH_KEY` | full contents of `medcare-key.pem`, `-----BEGIN` through `-----END` inclusive — get it with `cat ~/Downloads/medcare-key.pem` on your local machine |
-| `GHCR_PAT` | the PAT you just generated |
+| `GHCR_PAT`    | the PAT you just generated                                                                                                                          |
 
 `GITHUB_TOKEN` for the build-and-push job is auto-provided by GitHub — no secret needed for that one.
 
@@ -290,11 +291,11 @@ sudo certbot renew                     # force SSL renewal
 
 ## Quick reference — where every secret/value goes
 
-| Value | Where it's used |
-|---|---|
-| GitHub PAT | `GHCR_PAT` repo secret **+** typed into `docker login` on EC2 and locally (Step 9) |
-| DuckDNS token | Only in `~/.secrets/certbot/duckdns.ini` on EC2 — never a GitHub secret |
-| Elastic IP `35.154.233.70` | `EC2_HOST` repo secret + DuckDNS "current ip" field |
-| `.pem` key contents | `EC2_SSH_KEY` repo secret only |
-| `DATABASE_URL`, `OLLAMA_*`, `PORT`, `API_BASE_URL` | `/home/ec2-user/medcare.env` on EC2 only — never a GitHub secret |
-| Ollama Cloud API key | Ollama account → API keys (ollama.com), pasted into `medcare.env` — unrelated to AWS |
+| Value                                              | Where it's used                                                                      |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| GitHub PAT                                         | `GHCR_PAT` repo secret **+** typed into `docker login` on EC2 and locally (Step 9)   |
+| DuckDNS token                                      | Only in `~/.secrets/certbot/duckdns.ini` on EC2 — never a GitHub secret              |
+| Elastic IP `35.154.233.70`                         | `EC2_HOST` repo secret + DuckDNS "current ip" field                                  |
+| `.pem` key contents                                | `EC2_SSH_KEY` repo secret only                                                       |
+| `DATABASE_URL`, `OLLAMA_*`, `PORT`, `API_BASE_URL` | `/home/ec2-user/medcare.env` on EC2 only — never a GitHub secret                     |
+| Ollama Cloud API key                               | Ollama account → API keys (ollama.com), pasted into `medcare.env` — unrelated to AWS |
