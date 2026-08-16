@@ -1,110 +1,141 @@
 """
 Expiry Prediction Service
 =========================
-Implements the Expiry Aware Allocation Model (Weighted Risk Scoring)
-from expiry_related_programs_temp_dir/expiry_risk.py and expiry_model_weights.json.
+Loads pre-generated expiry_predictions.json from data/processed/ and
+builds the same structured response the API / frontend expects.
 
-Formula:
-    expiry_risk_score = 0.40 * expiry_urgency_score
-                      + 0.35 * inventory_pressure_score
-                      + 0.25 * coverage_risk_score
+No DB queries — mirrors the pattern used by surge_service.py so the
+endpoint works even when the database is empty.
+
+JSON schema (per record):
+  SKU, product_name, DC, dc_location, batch, mfg_date, expiry_date,
+  on_hand_quantity, available_on_hand_quantity,
+  days_to_expiry, weeks_to_expiry,
+  expected_weekly_demand, expected_demand_before_expiry,
+  expected_remaining_stock, inventory_coverage_weeks,
+  expiry_urgency_score, inventory_pressure_score, coverage_risk_score,
+  expiry_risk_score, expected_writeoff_quantity,
+  expiry_risk, recommended_action, allocation_priority
 """
 
 import json
 import os
-import numpy as np
-from datetime import date, timedelta
-from sqlalchemy.orm import Session
+from typing import Optional, List, Dict, Any
+
 from app.core.logging_config import logger
-from app.models.database_models import Batch, SKU, DistributionCenter, DemandHistory, Forecast
 
 # ---------------------------------------------------------------------------
-# Load model weights
+# Paths
 # ---------------------------------------------------------------------------
 
-_WEIGHTS_PATH = os.path.join(
-    os.path.dirname(__file__),
-    "../../data/processed/expiry_model_weights.json"
-)
+_DATA_DIR         = os.path.join(os.path.dirname(__file__), "../../data/processed")
+_PREDICTIONS_JSON = os.path.join(_DATA_DIR, "expiry_predictions.json")
+_WEIGHTS_PATH     = os.path.join(_DATA_DIR, "expiry_model_weights.json")
+_DCS_CSV          = os.path.join(_DATA_DIR, "dcs.csv")
+
+# ---------------------------------------------------------------------------
+# Module-level cache (loaded once per process)
+# ---------------------------------------------------------------------------
+
+_predictions: Optional[List[dict]] = None
+_model_weights: Optional[dict]     = None
+_dc_name_map: Optional[Dict[str, str]] = None
+
+
+def _load_dc_names() -> Dict[str, str]:
+    """Returns a dict mapping dc_id -> dc_name from dcs.csv."""
+    global _dc_name_map
+    if _dc_name_map is not None:
+        return _dc_name_map
+    _dc_name_map = {}
+    try:
+        with open(_DCS_CSV, "r") as f:
+            header = f.readline().strip().split(",")
+            id_col   = header.index("dc_id")
+            name_col = header.index("name")
+            for line in f:
+                parts = line.strip().split(",")
+                if len(parts) > max(id_col, name_col):
+                    _dc_name_map[parts[id_col]] = parts[name_col]
+        logger.info(f"DC name map loaded: {_dc_name_map}")
+    except Exception as e:
+        logger.warning(f"Could not load dcs.csv for DC name map: {e}")
+    return _dc_name_map
+
+
+def _load_predictions() -> List[dict]:
+    global _predictions
+    if _predictions is not None:
+        return _predictions
+    try:
+        with open(_PREDICTIONS_JSON, "r") as f:
+            raw = json.load(f)
+        # Normalise field names to what the rest of the service uses
+        dc_names = _load_dc_names()
+        normalised = []
+        for r in raw:
+            dc_id = str(r.get("DC", ""))
+            normalised.append({
+                "batch_id":                    str(r.get("batch", "")),
+                "sku_id":                      str(r.get("SKU", "")),
+                "sku_name":                    str(r.get("product_name", "")),
+                "dc_id":                       dc_id,
+                "dc_name":                     dc_names.get(dc_id, dc_id),   # e.g. "Chennai DC"
+                "dc_location":                 str(r.get("dc_location", "")),
+
+                "manufacturing_date":           str(r.get("mfg_date", "")),
+                "expiry_date":                 str(r.get("expiry_date", "")),
+                "days_to_expiry":              int(r.get("days_to_expiry", 0)),
+                "weeks_to_expiry":             round(float(r.get("weeks_to_expiry", 0)), 2),
+                "available_quantity":          int(float(r.get("available_on_hand_quantity", r.get("on_hand_quantity", 0)))),
+                "expected_weekly_demand":       round(float(r.get("expected_weekly_demand", 0)), 2),
+                "expected_demand_before_expiry": round(float(r.get("expected_demand_before_expiry", 0)), 2),
+                "expected_remaining_stock":    round(float(r.get("expected_remaining_stock", 0)), 2),
+                "inventory_coverage_weeks":    round(float(r.get("inventory_coverage_weeks", 0)), 2),
+                "expiry_urgency_score":        round(float(r.get("expiry_urgency_score", 0)), 4),
+                "inventory_pressure_score":    round(float(r.get("inventory_pressure_score", 0)), 4),
+                "coverage_risk_score":         round(float(r.get("coverage_risk_score", 0)), 4),
+                "expiry_risk_score":           round(float(r.get("expiry_risk_score", 0)), 4),
+                "expected_writeoff_quantity":  int(float(r.get("expected_writeoff_quantity", 0))),
+                "expiry_risk":                 str(r.get("expiry_risk", "LOW")).upper(),
+                "recommended_action":          str(r.get("recommended_action", "NORMAL_ALLOCATION")),
+                "unit_cost":                   round(float(r.get("unit_cost", 0)), 2),
+                "projected_loss_inr":          round(float(r.get("projected_loss_inr", 0)), 2),
+            })
+        _predictions = normalised
+        logger.info(f"Expiry predictions loaded: {len(normalised)} records from {_PREDICTIONS_JSON}")
+    except Exception as e:
+        logger.error(f"Failed to load expiry_predictions.json: {e}")
+        _predictions = []
+    return _predictions
+
 
 def _load_weights() -> dict:
+    global _model_weights
+    if _model_weights is not None:
+        return _model_weights
     try:
         with open(_WEIGHTS_PATH, "r") as f:
-            return json.load(f)
+            _model_weights = json.load(f)
     except Exception as e:
         logger.warning(f"Could not load expiry_model_weights.json: {e}. Using defaults.")
-        return {
+        _model_weights = {
+            "model_name": "Expiry Aware Allocation Model",
+            "formula": "0.40 * expiry_urgency + 0.35 * inventory_pressure + 0.25 * coverage_risk",
             "weights": {
                 "expiry_urgency_score": 0.40,
                 "inventory_pressure_score": 0.35,
                 "coverage_risk_score": 0.25,
             }
         }
-
-_MODEL_WEIGHTS = _load_weights()
-_W = _MODEL_WEIGHTS["weights"]
+    return _model_weights
 
 
 # ---------------------------------------------------------------------------
-# Score helpers (directly ported from expiry_risk.py)
+# AI Suggestion builder (same logic as before, zero DB dependency)
 # ---------------------------------------------------------------------------
 
-def _expiry_urgency_score(days: float) -> float:
-    if days < 0:      return 1.00
-    elif days <= 7:   return 1.00
-    elif days <= 14:  return 0.95
-    elif days <= 30:  return 0.85
-    elif days <= 60:  return 0.70
-    elif days <= 90:  return 0.50
-    elif days <= 180: return 0.30
-    elif days <= 365: return 0.15
-    else:             return 0.05
-
-
-def _inventory_pressure_score(ratio: float) -> float:
-    if ratio >= 12:   return 1.00
-    elif ratio >= 8:  return 0.90
-    elif ratio >= 6:  return 0.80
-    elif ratio >= 4:  return 0.65
-    elif ratio >= 2:  return 0.40
-    elif ratio >= 1:  return 0.20
-    else:             return 0.05
-
-
-def _coverage_risk_score(ratio: float) -> float:
-    if ratio >= 1:      return 1.00
-    elif ratio >= 0.75: return 0.80
-    elif ratio >= 0.50: return 0.60
-    elif ratio >= 0.25: return 0.30
-    else:               return 0.05
-
-
-def _classify(score: float, days: float, expected_remaining: float) -> str:
-    if days < 0:                          return "CRITICAL"
-    if days <= 30 and expected_remaining > 0: return "CRITICAL"
-    if score >= 0.75:                     return "HIGH"
-    if score >= 0.45:                     return "WATCH"
-    return "LOW"
-
-
-def _recommended_action(risk: str, days: float) -> str:
-    if days < 0:          return "EXPIRED_STOCK"
-    if risk == "CRITICAL": return "URGENT_ALLOCATION"
-    if risk == "HIGH":    return "PRIORITIZE_ALLOCATION"
-    if risk == "WATCH":   return "MONITOR_AND_PLAN"
-    return "NORMAL_ALLOCATION"
-
-
-# ---------------------------------------------------------------------------
-# Per-tier AI suggestion builder
-# ---------------------------------------------------------------------------
-
-def _build_suggestions(items: list, tier: str, today: date) -> dict:
-    """
-    Returns a structured suggestion dict with:
-      - status : one-line risk summary
-      - steps  : ordered list of action steps (rendered as flow diagram)
-    """
+def _build_suggestions(items: list, tier: str) -> dict:
     if not items:
         return {
             "status": f"✅ No {tier} risk items detected — inventory is healthy for this category.",
@@ -172,297 +203,157 @@ def _build_suggestions(items: list, tier: str, today: date) -> dict:
 
 
 # ---------------------------------------------------------------------------
-# Main service
+# Warehouse card builder
 # ---------------------------------------------------------------------------
 
-class ExpiryPredictionService:
-    """
-    Runs the Expiry Aware Allocation Model on all active batches and
-    returns structured prediction output for the Expiry Management page.
-    """
-
-    def _get_weekly_demand(self, db: Session, sku_id: str, dc_id: str, today: date) -> float:
-        """
-        Returns expected weekly demand for a SKU+DC.
-        Priority: latest 7-day forecast → 14-day historical avg → SKU base demand.
-        """
-        # Try 7-day forecast
-        fc = db.query(Forecast).filter(
-            Forecast.sku_id == sku_id,
-            Forecast.dc_id == dc_id,
-            Forecast.horizon_days == 7,
-            Forecast.prediction_date == today
-        ).first()
-        if fc and fc.forecasted_demand > 0:
-            return float(fc.forecasted_demand)
-
-        # Historical 14-day rolling average (×7 to get weekly)
-        from sqlalchemy import func
-        start = today - timedelta(days=14)
-        avg = db.query(func.avg(DemandHistory.quantity)).filter(
-            DemandHistory.sku_id == sku_id,
-            DemandHistory.dc_id == dc_id,
-            DemandHistory.date >= start,
-            DemandHistory.date <= today
-        ).scalar()
-        if avg is not None:
-            return float(avg) * 7.0
-
-        # SKU base demand fallback
-        sku = db.query(SKU).filter(SKU.sku_id == sku_id).first()
-        return float(sku.base_demand) * 7.0 if sku else 10.0
-
-    def run_expiry_model(self, db: Session, current_date: date) -> dict:
-        """
-        Runs the full expiry prediction pipeline and returns a structured
-        response suitable for the Expiry Management API endpoint.
-
-        Returns:
-            {
-                "warehouses_at_risk": [...],    # per-DC risk summary cards
-                "critical_items": [...],
-                "high_items": [...],
-                "watch_items": [...],
-                "low_items": [...],
-                "suggestions_critical": str,
-                "suggestions_high": str,
-                "suggestions_watch": str,
-                "model_info": {...}
-            }
-        """
-        logger.info(f"Running ExpiryPredictionService for date={current_date}")
-
-        # Fetch all active batches
-        batches = db.query(Batch).filter(Batch.remaining_quantity > 0).all()
-        if not batches:
-            logger.warning("No active batches found for expiry prediction.")
-            return _empty_response()
-
-        # Cache SKU and DC lookups
-        sku_cache: dict = {}
-        dc_cache: dict = {}
-
-        predictions = []
-
-        for b in batches:
-            sku_id = b.sku_id
-            dc_id = b.dc_id
-
-            if sku_id not in sku_cache:
-                sku_cache[sku_id] = db.query(SKU).filter(SKU.sku_id == sku_id).first()
-            if dc_id not in dc_cache:
-                dc_cache[dc_id] = db.query(DistributionCenter).filter(DistributionCenter.dc_id == dc_id).first()
-
-            sku = sku_cache[sku_id]
-            dc = dc_cache[dc_id]
-            if not sku or not dc:
-                continue
-
-            # ── Feature Engineering ─────────────────────────────────────────
-            days_to_expiry = (b.expiry_date - current_date).days
-            weeks_to_expiry = days_to_expiry / 7.0
-
-            available_qty = max(0.0, float(b.remaining_quantity))
-
-            weekly_demand = self._get_weekly_demand(db, sku_id, dc_id, current_date)
-
-            expected_demand_before_expiry = weekly_demand * max(0.0, weeks_to_expiry)
-            expected_remaining_stock = max(0.0, available_qty - expected_demand_before_expiry)
-            expected_writeoff_ratio = (
-                expected_remaining_stock / available_qty if available_qty > 0 else 0.0
-            )
-            expected_writeoff_ratio = min(1.0, max(0.0, expected_writeoff_ratio))
-
-            inventory_coverage_weeks = (
-                available_qty / weekly_demand if weekly_demand > 0 else 999.0
-            )
-            coverage_vs_expiry_ratio = (
-                inventory_coverage_weeks / weeks_to_expiry if weeks_to_expiry > 0 else 999.0
-            )
-            inventory_pressure_ratio = (
-                available_qty / weekly_demand if weekly_demand > 0 else 0.0
-            )
-
-            # ── Intermediate Scores ──────────────────────────────────────────
-            urg_score  = _expiry_urgency_score(days_to_expiry)
-            pres_score = _inventory_pressure_score(inventory_pressure_ratio)
-            cov_score  = _coverage_risk_score(coverage_vs_expiry_ratio)
-
-            # ── Final Weighted Score ─────────────────────────────────────────
-            risk_score = (
-                _W["expiry_urgency_score"]      * urg_score
-                + _W["inventory_pressure_score"] * pres_score
-                + _W["coverage_risk_score"]      * cov_score
-            )
-
-            # Force expired stock to max risk
-            if days_to_expiry < 0:
-                risk_score = 1.0
-
-            risk_score = float(np.clip(risk_score, 0.0, 1.0))
-
-            # ── Classification ───────────────────────────────────────────────
-            risk_class = _classify(risk_score, days_to_expiry, expected_remaining_stock)
-            action = _recommended_action(risk_class, days_to_expiry)
-
-            # ── Write-off Quantity ───────────────────────────────────────────
-            expected_writeoff_qty = int(min(
-                round(available_qty * expected_writeoff_ratio),
-                available_qty
-            ))
-
-            predictions.append({
-                "batch_id": b.batch_id,
-                "sku_id": sku_id,
-                "sku_name": sku.name,
-                "dc_id": dc_id,
-                "dc_name": dc.name,
-                "dc_location": dc.location,
-                "manufacturing_date": str(b.manufacturing_date),
-                "expiry_date": str(b.expiry_date),
-                "days_to_expiry": days_to_expiry,
-                "weeks_to_expiry": round(weeks_to_expiry, 2),
-                "available_quantity": int(available_qty),
-                "expected_weekly_demand": round(weekly_demand, 2),
-                "expected_demand_before_expiry": round(expected_demand_before_expiry, 2),
-                "expected_remaining_stock": round(expected_remaining_stock, 2),
-                "inventory_coverage_weeks": round(inventory_coverage_weeks, 2),
-                "expiry_urgency_score": round(urg_score, 4),
-                "inventory_pressure_score": round(pres_score, 4),
-                "coverage_risk_score": round(cov_score, 4),
-                "expiry_risk_score": round(risk_score, 4),
-                "expected_writeoff_quantity": expected_writeoff_qty,
-                "expiry_risk": risk_class,
-                "recommended_action": action,
-                "unit_cost": float(sku.unit_cost),
-                "projected_loss_inr": round(expected_writeoff_qty * sku.unit_cost, 2),
-            })
-
-        # ── Sort: by risk score descending ───────────────────────────────────
-        predictions.sort(key=lambda x: -x["expiry_risk_score"])
-
-        # ── Tier separation ──────────────────────────────────────────────────
-        critical_items = [p for p in predictions if p["expiry_risk"] == "CRITICAL"]
-        high_items     = [p for p in predictions if p["expiry_risk"] == "HIGH"]
-        watch_items    = [p for p in predictions if p["expiry_risk"] == "WATCH"]
-        low_items      = [p for p in predictions if p["expiry_risk"] == "LOW"]
-
-        # ── Warehouses at Risk ───────────────────────────────────────────────
-        warehouses_at_risk = _build_warehouse_cards(predictions, dc_cache)
-
-        # ── AI Suggestions ───────────────────────────────────────────────────
-        suggestions_critical = _build_suggestions(critical_items, "CRITICAL", current_date)
-        suggestions_high     = _build_suggestions(high_items,     "HIGH",     current_date)
-        suggestions_watch    = _build_suggestions(watch_items,    "WATCH",    current_date)
-
-        logger.info(
-            f"ExpiryPredictionService complete: "
-            f"CRITICAL={len(critical_items)}, HIGH={len(high_items)}, "
-            f"WATCH={len(watch_items)}, LOW={len(low_items)}"
-        )
-
-        return {
-            "warehouses_at_risk": warehouses_at_risk,
-            "critical_items": critical_items,
-            "high_items": high_items,
-            "watch_items": watch_items,
-            "low_items": low_items,
-            "suggestions_critical": suggestions_critical,
-            "suggestions_high": suggestions_high,
-            "suggestions_watch": suggestions_watch,
-            "summary": {
-                "total_batches": len(predictions),
-                "critical_count": len(critical_items),
-                "high_count": len(high_items),
-                "watch_count": len(watch_items),
-                "low_count": len(low_items),
-                "total_at_risk_units": sum(p["expected_writeoff_quantity"] for p in predictions),
-                "total_projected_loss_inr": round(sum(p["projected_loss_inr"] for p in predictions), 2),
-                "model_name": _MODEL_WEIGHTS.get("model_name", "Expiry Aware Allocation Model"),
-                "model_formula": _MODEL_WEIGHTS.get("formula", ""),
-            }
-        }
-
-
-def _build_warehouse_cards(predictions: list, dc_cache: dict) -> list:
-    """
-    Aggregates per-batch predictions into per-DC warehouse risk summary cards.
-    """
+def _build_warehouse_cards(predictions: list) -> list:
     dc_map: dict = {}
     for p in predictions:
         dc_id = p["dc_id"]
         if dc_id not in dc_map:
             dc_map[dc_id] = {
-                "dc_id": dc_id,
-                "dc_name": p["dc_name"],
-                "dc_location": p["dc_location"],
-                "total_batches": 0,
-                "critical_batches": 0,
-                "high_batches": 0,
-                "watch_batches": 0,
-                "low_batches": 0,
-                "total_at_risk_units": 0,
+                "dc_id":                  dc_id,
+                "dc_name":                p["dc_name"],
+                "dc_location":            p["dc_location"],
+                "total_batches":          0,
+                "critical_batches":       0,
+                "high_batches":           0,
+                "watch_batches":          0,
+                "low_batches":            0,
+                "total_at_risk_units":    0,
                 "total_projected_loss_inr": 0.0,
-                "worst_risk_score": 0.0,
-                "worst_risk_level": "LOW",
-                "skus_affected": set(),
+                "worst_risk_score":       0.0,
+                "worst_risk_level":       "LOW",
+                "skus_affected":          set(),
             }
         d = dc_map[dc_id]
         d["total_batches"] += 1
         d["skus_affected"].add(p["sku_id"])
-        d["total_at_risk_units"] += p["expected_writeoff_quantity"]
+        d["total_at_risk_units"]      += p["expected_writeoff_quantity"]
         d["total_projected_loss_inr"] += p["projected_loss_inr"]
         if p["expiry_risk_score"] > d["worst_risk_score"]:
             d["worst_risk_score"] = p["expiry_risk_score"]
             d["worst_risk_level"] = p["expiry_risk"]
-        d[f"{p['expiry_risk'].lower()}_batches"] += 1
+        tier_key = f"{p['expiry_risk'].lower()}_batches"
+        if tier_key in d:
+            d[tier_key] += 1
 
     result = []
     for dc_id, d in dc_map.items():
-        # Only surface warehouses that have at least one non-LOW batch
         if d["worst_risk_level"] == "LOW" and d["critical_batches"] == 0 and d["high_batches"] == 0 and d["watch_batches"] == 0:
             continue
         result.append({
-            "dc_id": d["dc_id"],
-            "dc_name": d["dc_name"],
-            "dc_location": d["dc_location"],
-            "total_batches": d["total_batches"],
-            "critical_batches": d["critical_batches"],
-            "high_batches": d["high_batches"],
-            "watch_batches": d["watch_batches"],
-            "low_batches": d["low_batches"],
-            "skus_affected": len(d["skus_affected"]),
-            "total_at_risk_units": d["total_at_risk_units"],
+            "dc_id":                    d["dc_id"],
+            "dc_name":                  d["dc_name"],
+            "dc_location":              d["dc_location"],
+            "total_batches":            d["total_batches"],
+            "critical_batches":         d["critical_batches"],
+            "high_batches":             d["high_batches"],
+            "watch_batches":            d["watch_batches"],
+            "low_batches":              d["low_batches"],
+            "skus_affected":            len(d["skus_affected"]),
+            "total_at_risk_units":      d["total_at_risk_units"],
             "total_projected_loss_inr": round(d["total_projected_loss_inr"], 2),
-            "worst_risk_score": round(d["worst_risk_score"], 4),
-            "worst_risk_level": d["worst_risk_level"],
+            "worst_risk_score":         round(d["worst_risk_score"], 4),
+            "worst_risk_level":         d["worst_risk_level"],
         })
 
-    # Sort warehouses: worst first
     _order = {"CRITICAL": 0, "HIGH": 1, "WATCH": 2, "LOW": 3}
     result.sort(key=lambda x: (_order.get(x["worst_risk_level"], 4), -x["worst_risk_score"]))
     return result
 
 
+# ---------------------------------------------------------------------------
+# Main public class — same interface as before, no db argument needed
+# ---------------------------------------------------------------------------
+
+class ExpiryPredictionService:
+    """
+    Reads expiry_predictions.json (pre-generated offline) and returns the
+    same structured response the frontend expects.  No live DB queries.
+    """
+
+    def run_expiry_model(self, db=None, current_date=None) -> dict:
+        """
+        Loads predictions from the baked-in JSON file and returns the full
+        structured response.  `db` and `current_date` are accepted but ignored
+        so the call-site in routes_inventory.py doesn't need to change.
+        """
+        predictions = _load_predictions()
+
+        if not predictions:
+            logger.warning("expiry_predictions.json is empty or could not be loaded.")
+            return _empty_response()
+
+        # Sort by risk score descending
+        predictions_sorted = sorted(predictions, key=lambda x: -x["expiry_risk_score"])
+
+        # Tier separation
+        critical_items = [p for p in predictions_sorted if p["expiry_risk"] == "CRITICAL"]
+        high_items     = [p for p in predictions_sorted if p["expiry_risk"] == "HIGH"]
+        watch_items    = [p for p in predictions_sorted if p["expiry_risk"] == "WATCH"]
+        low_items      = [p for p in predictions_sorted if p["expiry_risk"] == "LOW"]
+
+        warehouses_at_risk    = _build_warehouse_cards(predictions_sorted)
+        suggestions_critical  = _build_suggestions(critical_items, "CRITICAL")
+        suggestions_high      = _build_suggestions(high_items,     "HIGH")
+        suggestions_watch     = _build_suggestions(watch_items,    "WATCH")
+
+        weights = _load_weights()
+
+        logger.info(
+            f"ExpiryPredictionService (JSON mode): "
+            f"CRITICAL={len(critical_items)}, HIGH={len(high_items)}, "
+            f"WATCH={len(watch_items)}, LOW={len(low_items)}"
+        )
+
+        return {
+            "warehouses_at_risk":   warehouses_at_risk,
+            "critical_items":       critical_items,
+            "high_items":           high_items,
+            "watch_items":          watch_items,
+            "low_items":            low_items,
+            "suggestions_critical": suggestions_critical,
+            "suggestions_high":     suggestions_high,
+            "suggestions_watch":    suggestions_watch,
+            "summary": {
+                "total_batches":            len(predictions_sorted),
+                "critical_count":           len(critical_items),
+                "high_count":               len(high_items),
+                "watch_count":              len(watch_items),
+                "low_count":               len(low_items),
+                "total_at_risk_units":      sum(p["expected_writeoff_quantity"] for p in predictions_sorted),
+                "total_projected_loss_inr": round(sum(p["projected_loss_inr"] for p in predictions_sorted), 2),
+                "model_name":              weights.get("model_name", "Expiry Aware Allocation Model"),
+                "model_formula":           weights.get("formula", ""),
+            }
+        }
+
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
 def _empty_response() -> dict:
+    weights = _load_weights()
     return {
-        "warehouses_at_risk": [],
-        "critical_items": [],
-        "high_items": [],
-        "watch_items": [],
-        "low_items": [],
-        "suggestions_critical": "No active batches found in the system.",
-        "suggestions_high": "No active batches found in the system.",
-        "suggestions_watch": "No active batches found in the system.",
+        "warehouses_at_risk":   [],
+        "critical_items":       [],
+        "high_items":           [],
+        "watch_items":          [],
+        "low_items":            [],
+        "suggestions_critical": {"status": "No expiry prediction data found.", "steps": []},
+        "suggestions_high":     {"status": "No expiry prediction data found.", "steps": []},
+        "suggestions_watch":    {"status": "No expiry prediction data found.", "steps": []},
         "summary": {
-            "total_batches": 0,
-            "critical_count": 0,
-            "high_count": 0,
-            "watch_count": 0,
-            "low_count": 0,
-            "total_at_risk_units": 0,
+            "total_batches":            0,
+            "critical_count":           0,
+            "high_count":               0,
+            "watch_count":              0,
+            "low_count":                0,
+            "total_at_risk_units":      0,
             "total_projected_loss_inr": 0.0,
-            "model_name": "Expiry Aware Allocation Model",
-            "model_formula": "",
+            "model_name":              weights.get("model_name", "Expiry Aware Allocation Model"),
+            "model_formula":           weights.get("formula", ""),
         }
     }
