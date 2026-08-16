@@ -7777,3 +7777,120 @@ fastapi.exceptions.ResponseValidationError: 409 validation errors:
 
 2026-08-16 21:06:38,008 [INFO] medcare: Initializing fallback demand surges for primary region...
 2026-08-16 21:06:50,448 [INFO] medcare: Endpoint /api/live-scenario/analyze served in 13.3254s
+2026-08-16 22:37:20,155 [INFO] medcare: Endpoint /api/dashboard/skus served in 0.0614s
+2026-08-16 22:37:20,158 [INFO] medcare: Endpoint /api/dashboard/distribution-centers served in 0.0641s
+2026-08-16 22:37:20,171 [INFO] medcare: Endpoint /api/dashboard/distribution-centers served in 0.0056s
+2026-08-16 22:37:20,172 [INFO] medcare: Endpoint /api/dashboard/skus served in 0.0080s
+2026-08-16 22:37:20,407 [INFO] medcare: Endpoint /api/recommendations served in 0.2189s
+2026-08-16 22:37:20,692 [INFO] medcare: Endpoint /api/recommendations served in 0.2735s
+2026-08-16 22:37:21,671 [INFO] medcare: Endpoint /api/live-scenario/status served in 0.0310s
+2026-08-16 22:37:21,705 [INFO] medcare: Fetching trending health/disaster headlines from Google News RSS...
+2026-08-16 22:37:21,729 [INFO] medcare: Endpoint /api/live-scenario/status served in 0.0343s
+2026-08-16 22:37:22,455 [INFO] medcare: Endpoint /api/live-scenario/news served in 0.7599s
+2026-08-16 22:37:22,472 [INFO] medcare: Fetching trending health/disaster headlines from Google News RSS...
+2026-08-16 22:37:22,724 [INFO] medcare: Endpoint /api/live-scenario/news served in 0.2539s
+2026-08-16 22:37:22,940 [INFO] medcare: Endpoint /api/inventory/expiry-risks served in 2.7512s
+2026-08-16 22:37:23,036 [INFO] medcare: Endpoint /api/dashboard/summary served in 2.8508s
+2026-08-16 22:37:25,669 [INFO] medcare: Endpoint /api/inventory/expiry-risks served in 2.7085s
+2026-08-16 22:37:25,680 [INFO] medcare: Endpoint /api/dashboard/summary served in 2.6318s
+2026-08-16 22:37:25,922 [WARNING] medcare: Ollama Cloud returned HTTP 404 for model 'llama3.2': {"error": "model 'llama3.2' not found"}
+
+2026-08-16 22:37:25,924 [INFO] medcare: Initializing fallback demand surges for primary region...
+2026-08-16 22:37:32,790 [INFO] medcare: Endpoint /api/inventory/status served in 12.6017s
+2026-08-16 22:37:41,212 [INFO] medcare: Endpoint /api/inventory/status served in 8.4124s
+2026-08-16 22:37:49,482 [INFO] medcare: Endpoint /api/live-scenario/analyze served in 25.9754s
+2026-08-16 22:37:53,265 [INFO] medcare: Operational mode switched to SIMULATED
+2026-08-16 22:37:53,267 [INFO] medcare: Endpoint /api/live-scenario/mode served in 0.0037s
+2026-08-16 22:37:53,286 [INFO] medcare: Endpoint /api/live-scenario/status served in 0.0036s
+2026-08-16 22:37:53,302 [INFO] medcare: Fetching trending health/disaster headlines from Google News RSS...
+2026-08-16 22:37:53,483 [INFO] medcare: Endpoint /api/live-scenario/news served in 0.1816s
+2026-08-16 22:37:54,639 [INFO] medcare: Endpoint /api/live-scenario/simulate served in 0.0033s
+2026-08-16 22:37:54,655 [INFO] medcare: Endpoint /api/live-scenario/status served in 0.0038s
+2026-08-16 22:37:54,674 [INFO] medcare: Fetching trending health/disaster headlines from Google News RSS...
+2026-08-16 22:37:54,918 [INFO] medcare: Endpoint /api/live-scenario/news served in 0.2460s
+2026-08-16 22:37:56,336 [WARNING] medcare: Ollama Cloud returned HTTP 404 for model 'llama3.2': {"error": "model 'llama3.2' not found"}
+
+2026-08-16 22:37:56,339 [INFO] medcare: Initializing fallback demand surges for primary region...
+2026-08-16 22:38:09,009 [INFO] medcare: Endpoint /api/live-scenario/analyze served in 13.4903s
+2026-08-16 22:38:31,097 [INFO] medcare: Endpoint /api/dashboard/skus served in 0.1084s
+2026-08-16 22:38:31,099 [INFO] medcare: Endpoint /api/dashboard/distribution-centers served in 0.1015s
+2026-08-16 22:38:31,129 [INFO] medcare: Endpoint /api/dashboard/distribution-centers served in 0.0154s
+2026-08-16 22:38:31,189 [INFO] medcare: Endpoint /api/dashboard/skus served in 0.0772s
+2026-08-16 22:38:31,448 [INFO] medcare: Endpoint /api/recommendations served in 0.2794s
+2026-08-16 22:38:31,696 [INFO] medcare: Endpoint /api/recommendations served in 0.2352s
+2026-08-16 22:38:32,520 [INFO] medcare: Endpoint /api/live-scenario/status served in 0.0359s
+2026-08-16 22:38:32,557 [INFO] medcare: Fetching trending health/disaster headlines from Google News RSS...
+2026-08-16 22:38:32,563 [INFO] medcare: Endpoint /api/live-scenario/status served in 0.0116s
+2026-08-16 22:38:32,814 [INFO] medcare: Endpoint /api/live-scenario/news served in 0.2624s
+2026-08-16 22:38:32,840 [INFO] medcare: Fetching trending health/disaster headlines from Google News RSS...
+2026-08-16 22:38:33,133 [INFO] medcare: Endpoint /api/live-scenario/news served in 0.2987s
+2026-08-16 22:38:33,852 [INFO] medcare: Operational mode switched to SIMULATED
+2026-08-16 22:38:33,856 [INFO] medcare: Endpoint /api/live-scenario/mode served in 0.0060s
+2026-08-16 22:38:33,885 [INFO] medcare: Endpoint /api/live-scenario/status served in 0.0045s
+2026-08-16 22:38:33,915 [INFO] medcare: Fetching trending health/disaster headlines from Google News RSS...
+2026-08-16 22:38:34,099 [INFO] medcare: Endpoint /api/inventory/expiry-risks served in 2.9301s
+2026-08-16 22:38:34,147 [INFO] medcare: Endpoint /api/live-scenario/news served in 0.2342s
+2026-08-16 22:38:34,188 [INFO] medcare: Endpoint /api/dashboard/summary served in 3.0641s
+2026-08-16 22:38:36,191 [INFO] medcare: Endpoint /api/live-scenario/simulate served in 0.0037s
+2026-08-16 22:38:36,224 [INFO] medcare: Endpoint /api/live-scenario/status served in 0.0169s
+2026-08-16 22:38:36,257 [INFO] medcare: Fetching trending health/disaster headlines from Google News RSS...
+2026-08-16 22:38:36,418 [INFO] medcare: Endpoint /api/inventory/expiry-risks served in 2.3052s
+2026-08-16 22:38:36,423 [INFO] medcare: Endpoint /api/live-scenario/news served in 0.1669s
+2026-08-16 22:38:36,454 [INFO] medcare: Endpoint /api/dashboard/summary served in 2.2381s
+2026-08-16 22:38:38,894 [INFO] medcare: Endpoint /api/inventory/status served in 7.7623s
+2026-08-16 22:38:39,550 [WARNING] medcare: Ollama Cloud returned HTTP 404 for model 'llama3.2': {"error": "model 'llama3.2' not found"}
+
+2026-08-16 22:38:39,551 [INFO] medcare: Initializing fallback demand surges for primary region...
+2026-08-16 22:38:46,370 [INFO] medcare: Endpoint /api/inventory/status served in 7.4713s
+2026-08-16 22:38:57,484 [INFO] medcare: Endpoint /api/live-scenario/analyze served in 19.8526s
+2026-08-16 22:40:01,843 [INFO] medcare: Endpoint /api/recommendations served in 0.1263s
+2026-08-16 22:40:02,149 [INFO] medcare: Endpoint /api/recommendations served in 0.2961s
+2026-08-16 22:40:04,106 [INFO] medcare: Endpoint /api/inventory/expiry-risks served in 2.3873s
+2026-08-16 22:40:04,107 [INFO] medcare: Endpoint /api/dashboard/summary served in 2.3904s
+2026-08-16 22:40:06,088 [INFO] medcare: Endpoint /api/dashboard/summary served in 1.9611s
+2026-08-16 22:40:06,169 [INFO] medcare: Endpoint /api/inventory/expiry-risks served in 2.0453s
+2026-08-16 22:40:08,408 [INFO] medcare: Endpoint /api/inventory/status served in 6.6914s
+2026-08-16 22:40:10,902 [INFO] medcare: Endpoint /api/inventory/status served in 2.4879s
+2026-08-16 22:40:12,001 [INFO] medcare: Endpoint /api/forecast/historical-comparison served in 0.0150s
+2026-08-16 22:40:14,022 [INFO] medcare: Endpoint /api/forecast/historical-comparison served in 0.0089s
+2026-08-16 22:40:18,184 [INFO] medcare: Endpoint /api/inventory/status served in 2.8484s
+2026-08-16 22:40:19,378 [INFO] medcare: Running ExpiryPredictionService for date=2026-08-12
+2026-08-16 22:40:20,143 [INFO] medcare: ExpiryPredictionService complete: CRITICAL=2, HIGH=2, WATCH=2, LOW=605
+2026-08-16 22:40:20,218 [INFO] medcare: Endpoint /api/inventory/expiry-predictions served in 0.8418s
+2026-08-16 22:40:20,227 [INFO] medcare: Running ExpiryPredictionService for date=2026-08-12
+2026-08-16 22:40:20,777 [INFO] medcare: ExpiryPredictionService complete: CRITICAL=2, HIGH=2, WATCH=2, LOW=605
+2026-08-16 22:40:20,824 [INFO] medcare: Endpoint /api/inventory/expiry-predictions served in 0.5989s
+2026-08-16 22:40:22,055 [INFO] medcare: Endpoint /api/inventory/status served in 3.8659s
+2026-08-16 22:40:27,528 [INFO] medcare: Top-10 surge products loaded from /home/muruga/workspace/medcare-ai/app/services/../../data/processed/top_10_surge_products.json
+2026-08-16 22:40:27,534 [INFO] medcare: Endpoint /api/surge/top-products served in 0.0093s
+2026-08-16 22:40:27,553 [INFO] medcare: Endpoint /api/surge/top-products served in 0.0090s
+2026-08-16 22:40:27,593 [INFO] medcare: Surge predictions loaded: 108 rows from /home/muruga/workspace/medcare-ai/app/services/../../data/processed/surge_predictions.csv
+2026-08-16 22:40:27,598 [INFO] medcare: Surge predictions loaded: 108 rows from /home/muruga/workspace/medcare-ai/app/services/../../data/processed/surge_predictions.csv
+2026-08-16 22:40:27,619 [INFO] medcare: Endpoint /api/surge/predictions served in 0.0925s
+2026-08-16 22:40:27,625 [INFO] medcare: Endpoint /api/surge/summary served in 0.1002s
+2026-08-16 22:40:27,640 [INFO] medcare: Endpoint /api/surge/predictions served in 0.0094s
+2026-08-16 22:40:27,652 [INFO] medcare: Endpoint /api/surge/summary served in 0.0098s
+2026-08-16 22:40:29,179 [INFO] medcare: Endpoint /api/recommendations served in 0.0167s
+2026-08-16 22:40:29,214 [INFO] medcare: Endpoint /api/recommendations served in 0.0237s
+2026-08-16 22:40:30,435 [INFO] medcare: Endpoint /api/recommendations/transfers served in 0.0085s
+2026-08-16 22:40:30,456 [INFO] medcare: Endpoint /api/recommendations/transfers served in 0.0095s
+2026-08-16 22:40:31,659 [INFO] medcare: Endpoint /api/recommendations served in 0.0182s
+2026-08-16 22:40:31,698 [INFO] medcare: Endpoint /api/recommendations served in 0.0248s
+2026-08-16 22:40:34,372 [INFO] medcare: Endpoint /api/live-scenario/status served in 0.0041s
+2026-08-16 22:40:34,385 [INFO] medcare: Endpoint /api/live-scenario/status served in 0.0029s
+2026-08-16 22:40:34,392 [INFO] medcare: Fetching trending health/disaster headlines from Google News RSS...
+2026-08-16 22:40:35,061 [INFO] medcare: Endpoint /api/live-scenario/news served in 0.6698s
+2026-08-16 22:40:35,072 [INFO] medcare: Fetching trending health/disaster headlines from Google News RSS...
+2026-08-16 22:40:35,274 [INFO] medcare: Endpoint /api/live-scenario/news served in 0.2034s
+2026-08-16 22:40:38,129 [WARNING] medcare: Ollama Cloud returned HTTP 404 for model 'llama3.2': {"error": "model 'llama3.2' not found"}
+
+2026-08-16 22:40:38,132 [INFO] medcare: Initializing fallback demand surges for primary region...
+2026-08-16 22:40:51,262 [INFO] medcare: Endpoint /api/live-scenario/analyze served in 13.9348s
+2026-08-16 22:41:03,103 [INFO] medcare: Endpoint /api/live-scenario/simulate served in 0.0025s
+2026-08-16 22:41:03,126 [INFO] medcare: Endpoint /api/live-scenario/status served in 0.0044s
+2026-08-16 22:41:03,149 [INFO] medcare: Fetching trending health/disaster headlines from Google News RSS...
+2026-08-16 22:41:03,343 [INFO] medcare: Endpoint /api/live-scenario/news served in 0.1946s
+2026-08-16 22:41:06,494 [WARNING] medcare: Ollama Cloud returned HTTP 404 for model 'llama3.2': {"error": "model 'llama3.2' not found"}
+
+2026-08-16 22:41:06,496 [INFO] medcare: Initializing fallback demand surges for primary region...
+2026-08-16 22:41:19,007 [INFO] medcare: Endpoint /api/live-scenario/analyze served in 14.1380s
