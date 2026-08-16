@@ -19,7 +19,7 @@ class Settings(BaseSettings):
 
     # LLM Settings — Ollama Cloud (https://ollama.com)
     OLLAMA_HOST: str = "https://ollama.com"
-    OLLAMA_MODEL:str = "llama3.2"
+    OLLAMA_MODEL: str = "gpt-oss:20b"
     OLLAMA_API_KEY: Optional[str] = None  # from https://ollama.com/settings/keys
 
     # API Base URL

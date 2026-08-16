@@ -24,7 +24,28 @@ function AppContent() {
   const [refreshKey, setRefreshKey] = useState(0); // force page re-mount on refresh
   const [actionPriority, setActionPriority] = useState('CRITICAL'); // deep-link priority for Action Center
   const [actionFilterSku, setActionFilterSku] = useState(null); // deep-link specific SKU
+  const [actionFromPage, setActionFromPage] = useState(null);
+  const [actionExpiryItem, setActionExpiryItem] = useState(null);
+  const [resolvedBatches, setResolvedBatches] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('medcare-resolved-batches') || '[]');
+    } catch {
+      return [];
+    }
+  });
   const showToast = useToast();
+
+  const markBatchResolved = useCallback((batchId) => {
+    if (!batchId) return;
+    setResolvedBatches(prev => {
+      if (prev.includes(batchId)) return prev;
+      const next = [...prev, batchId];
+      try {
+        localStorage.setItem('medcare-resolved-batches', JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+  }, []);
 
   useEffect(() => {
     // Apply saved theme on mount
@@ -55,10 +76,19 @@ function AppContent() {
   const navigateTo = useCallback((page, opts = {}) => {
     if (opts.actionPriority) setActionPriority(opts.actionPriority);
     if (opts.filterSku !== undefined) setActionFilterSku(opts.filterSku);
+    setActionFromPage(opts.fromPage || null);
+    setActionExpiryItem(opts.expiryItem || null);
     setActivePage(page);
   }, []);
 
-  const pageProps = { skus, dcs, refreshKey, onNavigate: navigateTo };
+  const pageProps = { 
+    skus, 
+    dcs, 
+    refreshKey, 
+    onNavigate: navigateTo,
+    resolvedBatches,
+    markBatchResolved
+  };
 
   let PageComponent;
   switch (activePage) {
@@ -68,7 +98,7 @@ function AppContent() {
     case 'expiry':      PageComponent = <Expiry      {...pageProps} />; break;
     case 'replenish':   PageComponent = <Replenishments {...pageProps} />; break;
     case 'transfers':   PageComponent = <Transfers   {...pageProps} />; break;
-    case 'actions':     PageComponent = <Actions     {...pageProps} initialPriority={actionPriority} filterSku={actionFilterSku} />; break;
+    case 'actions':     PageComponent = <Actions     {...pageProps} initialPriority={actionPriority} filterSku={actionFilterSku} fromPage={actionFromPage} expiryItem={actionExpiryItem} />; break;
     case 'simulation':  PageComponent = <Simulation  {...pageProps} />; break;
     case 'live-scenario': PageComponent = <LiveScenario {...pageProps} />; break;
     case 'explorer':    PageComponent = <Explorer    {...pageProps} />; break;

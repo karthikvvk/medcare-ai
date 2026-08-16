@@ -44,12 +44,12 @@ export default function Replenishments({ skus, dcs }) {
               <tr>
                 <th>SKU ID</th><th>Medication Name</th><th>DC Target</th>
                 <th>Recommended Qty</th><th>Unit Price</th><th>Purchase Spend</th>
-                <th>Priority Escalation</th><th>Confidence</th><th>Order Rationale</th>
+                <th>Priority Escalation</th><th>Confidence</th>
               </tr>
             </thead>
             <tbody>
               {data.length === 0 ? (
-                <tr><td colSpan={9} style={{textAlign:'center',color:'var(--text-secondary)'}}><i className="fa-solid fa-check" style={{color:'var(--accent-emerald)'}} /> No replenishment orders recommended. Available stock comfortably covers safety bounds.</td></tr>
+                <tr><td colSpan={8} style={{textAlign:'center',color:'var(--text-secondary)'}}><i className="fa-solid fa-check" style={{color:'var(--accent-emerald)'}} /> No replenishment orders recommended. Available stock comfortably covers safety bounds.</td></tr>
               ) : data.map((r, idx) => {
                 const sku = skus.find(s => s.sku_id === r.sku_id);
                 const dc = dcs.find(d => d.dc_id === r.dc_id);
@@ -64,7 +64,6 @@ export default function Replenishments({ skus, dcs }) {
                     <td><strong>${(price * r.quantity).toLocaleString(undefined, {minimumFractionDigits:2})}</strong></td>
                     <td><Badge label={r.priority} /></td>
                     <td>{(r.confidence * 100).toFixed(0)}%</td>
-                    <td>{r.reason}</td>
                   </tr>
                 );
               })}

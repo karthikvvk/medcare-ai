@@ -9,7 +9,16 @@ const gridColor = () => isLight() ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.04)
 const tickColor = () => isLight() ? '#475569' : '#94a3b8';
 const legendColor = () => isLight() ? '#0f172a' : '#f8fafc';
 
-export default function Actions({ skus, dcs, initialPriority = 'CRITICAL', filterSku = null }) {
+export default function Actions({ 
+  skus, 
+  dcs, 
+  initialPriority = 'CRITICAL', 
+  filterSku = null, 
+  fromPage = null, 
+  expiryItem = null, 
+  onNavigate,
+  markBatchResolved 
+}) {
   const [recs, setRecs] = useState([]);
   const [priority, setPriority] = useState(initialPriority);
   const [loading, setLoading] = useState(true);
@@ -19,13 +28,31 @@ export default function Actions({ skus, dcs, initialPriority = 'CRITICAL', filte
   const loadData = () => {
     setLoading(true);
     getRecommendations().then(d => {
-      const activeRecs = d.filter(r => r.action_type !== 'NO_ACTION');
+      const activeRecs = d.filter(r => r.action_type !== 'NO_ACTION' && r.status !== 'APPROVED' && r.status !== 'REJECTED');
       setRecs(activeRecs);
       setLoading(false);
       
-      // Auto drill-down if a filterSku is provided
-      if (filterSku) {
-        const matchingRec = activeRecs.find(r => r.sku_id === filterSku);
+      // Auto drill-down if a filterSku or expiryItem is provided
+      if (filterSku || expiryItem) {
+        let matchingRec = activeRecs.find(r => r.sku_id === (filterSku || expiryItem?.sku_id));
+        if (!matchingRec && expiryItem) {
+          matchingRec = {
+            recommendation_id: `REC-EXP-${expiryItem.batch_id || expiryItem.sku_id}`,
+            sku_id: expiryItem.sku_id,
+            dc_id: expiryItem.dc_id || (dcs[0]?.dc_id ?? 'DC001'),
+            action_type: expiryItem.recommended_action || (expiryItem.days_to_expiry < 30 ? 'EXPEDITE_FEFO' : 'REDUCE_ORDER'),
+            priority: expiryItem.expiry_risk === 'WATCH' ? 'HIGH' : (expiryItem.expiry_risk || 'CRITICAL'),
+            quantity: expiryItem.expected_writeoff_quantity || expiryItem.available_quantity || 100,
+            reason: `Expiry Action Protocol for Batch [${expiryItem.batch_id || ''}]. ${expiryItem.available_quantity?.toLocaleString() || 0} units at ${expiryItem.dc_name || expiryItem.dc_id} expiring in ${expiryItem.days_to_expiry} days (${expiryItem.expiry_date}). AI model recommends immediate FEFO prioritized redistribution or markdown to mitigate projected write-off loss.`,
+            expected_impact: `Avoid projected loss of ₹${(expiryItem.projected_loss_inr || ((expiryItem.expected_writeoff_quantity || expiryItem.available_quantity || 0) * (expiryItem.unit_cost || 25))).toLocaleString(undefined, {maximumFractionDigits:0})}.`,
+            confidence: expiryItem.expiry_risk_score || 0.95,
+            status: 'PENDING',
+            isExpirySuggestion: true,
+            batch_id: expiryItem.batch_id
+          };
+        } else if (matchingRec && expiryItem?.batch_id) {
+          matchingRec = { ...matchingRec, batch_id: expiryItem.batch_id, isExpirySuggestion: true };
+        }
         if (matchingRec) {
           setDrilldown(matchingRec);
         }
@@ -33,9 +60,22 @@ export default function Actions({ skus, dcs, initialPriority = 'CRITICAL', filte
     }).catch(() => setLoading(false));
   };
 
-  useEffect(() => { loadData(); }, [filterSku]);
+  useEffect(() => { loadData(); }, [filterSku, expiryItem]);
 
-  if (drilldown) return <ActionDetail rec={drilldown} skus={skus} dcs={dcs} onBack={() => { setDrilldown(null); }} onStatusUpdate={loadData} />;
+  if (drilldown) {
+    return (
+      <ActionDetail 
+        rec={drilldown} 
+        skus={skus} 
+        dcs={dcs} 
+        onBack={() => { setDrilldown(null); }} 
+        onStatusUpdate={loadData}
+        fromPage={fromPage}
+        onNavigate={onNavigate}
+        markBatchResolved={markBatchResolved}
+      />
+    );
+  }
 
   const filtered = recs.filter(r => r.priority === priority);
 
@@ -50,7 +90,7 @@ export default function Actions({ skus, dcs, initialPriority = 'CRITICAL', filte
           onClick={() => {
             setLoading(true);
             getRecommendations(DATE, true).then(d => {
-              const activeRecs = d.filter(r => r.action_type !== 'NO_ACTION');
+              const activeRecs = d.filter(r => r.action_type !== 'NO_ACTION' && r.status !== 'APPROVED' && r.status !== 'REJECTED');
               setRecs(activeRecs);
               setLoading(false);
               showToast('Action recommendations regenerated!', 'success');
@@ -118,7 +158,7 @@ export default function Actions({ skus, dcs, initialPriority = 'CRITICAL', filte
   );
 }
 
-function ActionDetail({ rec, skus, dcs, onBack, onStatusUpdate }) {
+function ActionDetail({ rec, skus, dcs, onBack, onStatusUpdate, fromPage, onNavigate, markBatchResolved }) {
   const showToast = useToast();
   const [invStatus, setInvStatus] = useState(null);
   const [chartData, setChartData] = useState(null);
@@ -142,22 +182,43 @@ function ActionDetail({ rec, skus, dcs, onBack, onStatusUpdate }) {
 
   const handleUpdate = async (status) => {
     try {
-      await updateRecStatus(rec.recommendation_id, status);
+      if (rec.recommendation_id && !rec.recommendation_id.startsWith('REC-EXP-')) {
+        await updateRecStatus(rec.recommendation_id, status);
+      }
+      if (rec.batch_id && markBatchResolved) {
+        markBatchResolved(rec.batch_id);
+      }
       showToast(`Recommendation successfully ${status === 'APPROVED' ? 'Approved' : 'Rejected'}!`, 'success');
       onStatusUpdate();
-      onBack();
+      if (fromPage === 'expiry' && onNavigate) {
+        onNavigate('expiry');
+      } else {
+        onBack();
+      }
     } catch (e) {
       showToast(`Failed to update status: ${e.message}`, 'critical');
     }
   };
 
   const sku = skus.find(s => s.sku_id === rec.sku_id);
+  const dc = dcs.find(d => d.dc_id === rec.dc_id);
   
   return (
     <div className="page animate-fade-in">
       <div style={{marginBottom:'20px'}}>
-        <a href="#" onClick={e => { e.preventDefault(); onBack(); }} style={{color:'var(--accent-indigo)', textDecoration:'none', fontWeight:600, display:'inline-flex', alignItems:'center', gap:'8px'}}>
-          <i className="fa-solid fa-arrow-left" /> Back to Escalations List
+        <a 
+          href="#" 
+          onClick={e => { 
+            e.preventDefault(); 
+            if (fromPage === 'expiry' && onNavigate) {
+              onNavigate('expiry');
+            } else {
+              onBack(); 
+            }
+          }} 
+          style={{color:'var(--accent-indigo)', textDecoration:'none', fontWeight:600, display:'inline-flex', alignItems:'center', gap:'8px'}}
+        >
+          <i className="fa-solid fa-arrow-left" /> {fromPage === 'expiry' ? 'Back to Expiry Management' : 'Back to Escalations List'}
         </a>
       </div>
 
@@ -167,7 +228,9 @@ function ActionDetail({ rec, skus, dcs, onBack, onStatusUpdate }) {
             <div>
               <Badge label={rec.priority} />
               <h2 style={{fontFamily:'Outfit', fontSize:'1.5rem', marginTop:'8px', color:'var(--text-primary)'}}>{sku?.name || rec.sku_id}</h2>
-              <span style={{fontSize:'0.85rem', color:'var(--text-secondary)'}}>SKU Reference: {rec.sku_id}</span>
+              <span style={{fontSize:'0.85rem', color:'var(--text-secondary)'}}>
+                SKU Reference: {rec.sku_id} {rec.batch_id ? `· Batch: ${rec.batch_id}` : ''} {dc ? `· DC: ${dc.name}` : ''}
+              </span>
             </div>
             <div style={{textAlign:'right'}}>
               <Badge label={rec.action_type} />
@@ -198,7 +261,7 @@ function ActionDetail({ rec, skus, dcs, onBack, onStatusUpdate }) {
             <strong>Escalation Explanation:</strong>
             <p style={{marginTop:'6px', color:'var(--text-primary)', lineHeight:1.5}}>{rec.reason}</p>
             <p style={{color:'var(--accent-emerald)', marginTop:'10px', fontWeight:600, display:'flex', alignItems:'center', gap:'6px'}}>
-              <i className="fa-solid fa-shield-halved" /> Estimated Saved Valuation: {rec.expected_impact}
+              <i className="fa-solid fa-shield-halved" /> Estimated Impact: {rec.expected_impact}
             </p>
           </div>
 
@@ -212,7 +275,43 @@ function ActionDetail({ rec, skus, dcs, onBack, onStatusUpdate }) {
           </div>
         </div>
 
-
+        <div className="card" style={{display:'flex', flexDirection:'column', gap:'16px'}}>
+          <h3 className="section-title" style={{margin:0, fontSize:'1.05rem'}}>
+            <i className="fa-solid fa-chart-line" /> Demand &amp; Allocation Forecast
+          </h3>
+          <div className="chart-container" style={{height:'260px'}}>
+            {chartData ? (
+              <Line 
+                data={{
+                  labels: chartData.labels,
+                  datasets: [
+                    { label: 'Historical Actuals', data: chartData.actualValues, borderColor: '#6366f1', backgroundColor: 'rgba(99,102,241,0.1)', fill: true, borderWidth: 2, tension: 0.3, spanGaps: true },
+                    { label: 'Sensing Forecast', data: chartData.forecastValues, borderColor: '#10b981', borderDash: [4, 4], borderWidth: 2, tension: 0.3, spanGaps: true },
+                  ]
+                }} 
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: { legend: { labels: { color: legendColor() } } },
+                  scales: {
+                    x: { grid: { color: gridColor() }, ticks: { color: tickColor() } },
+                    y: { 
+                      grid: { color: gridColor() }, 
+                      ticks: { color: tickColor() },
+                      title: { display: true, text: 'Units', color: tickColor(), font: { size: 10, weight: '600' } }
+                    }
+                  }
+                }}
+              />
+            ) : (
+              <div className="loading"><i className="fa-solid fa-circle-notch fa-spin" /> Loading projection...</div>
+            )}
+          </div>
+          <div style={{background:'rgba(255,255,255,0.03)', borderRadius:'8px', padding:'12px', fontSize:'0.85rem', color:'var(--text-secondary)'}}>
+            <i className="fa-solid fa-circle-info" style={{color:'var(--accent-indigo)', marginRight:'6px'}} />
+            Action approval triggers immediate inventory re-balancing and updates the ERP procurement queue.
+          </div>
+        </div>
       </div>
     </div>
   );

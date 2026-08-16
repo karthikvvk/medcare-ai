@@ -108,7 +108,16 @@ export default function Overview({ skus, dcs, refreshKey }) {
     plugins: { legend: { labels: { color: legendColor() } } },
     scales: {
       x: { grid: { color: gridColor() }, ticks: { color: tickColor() } },
-      y: { grid: { color: gridColor() }, ticks: { color: tickColor() } },
+      y: { 
+        grid: { color: gridColor() }, 
+        ticks: { color: tickColor() },
+        title: {
+          display: true,
+          text: 'Units',
+          color: tickColor(),
+          font: { size: 11, weight: '600' }
+        }
+      },
     },
   };
 
@@ -146,12 +155,7 @@ export default function Overview({ skus, dcs, refreshKey }) {
       {/* Charts row */}
       <div className="grid-2-1">
         <div className="card">
-          {sumData?.summary && (
-            <div className="summary-box" style={{ marginBottom:'16px' }}>
-              <strong><i className="fa-solid fa-clipboard-list" /> Executive Summary:</strong><br />
-              <span style={{ fontSize:'0.9rem', lineHeight:'1.5' }}>{sumData.summary}</span>
-            </div>
-          )}
+
           <h2 className="section-title"><i className="fa-solid fa-chart-line" /> Daily Sales Trend &amp; Demand Forecast</h2>
           <div className="chart-container">
             <Line data={{
@@ -184,7 +188,16 @@ export default function Overview({ skus, dcs, refreshKey }) {
                 plugins:{legend:{display:false}},
                 scales:{
                   x:{grid:{display:false},ticks:{color:tickColor(),font:{size:9}}},
-                  y:{grid:{color:gridColor()},ticks:{color:tickColor(),font:{size:9}}}
+                  y:{
+                    grid:{color:gridColor()},
+                    ticks:{color:tickColor(),font:{size:9}},
+                    title:{
+                      display:true,
+                      text:'Days',
+                      color:tickColor(),
+                      font:{size:10, weight:'600'}
+                    }
+                  }
                 }
               }} />
             </div>
@@ -198,7 +211,7 @@ export default function Overview({ skus, dcs, refreshKey }) {
         <div className="table-container">
           <table>
             <thead>
-              <tr><th>SKU</th><th>Distribution Center</th><th>Action</th><th>Quantity</th><th>Expected Impact</th></tr>
+              <tr><th>SKU</th><th>Distribution Center</th><th>Action</th><th>Quantity</th></tr>
             </thead>
             <tbody>
               {visibleRecs.length === 0 ? (
@@ -215,7 +228,6 @@ export default function Overview({ skus, dcs, refreshKey }) {
                     <td>{dc?.name || r.dc_id}</td>
                     <td><Badge label={r.action_type} /></td>
                     <td><strong>{parseInt(r.quantity)}</strong></td>
-                    <td style={{color:'var(--accent-emerald)'}}>{r.expected_impact}</td>
                   </tr>
                 );
               })}

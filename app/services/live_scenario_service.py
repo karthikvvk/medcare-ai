@@ -68,7 +68,7 @@ class OllamaCloudClient:
                 f"{settings.OLLAMA_HOST}/api/chat",
                 headers=headers,
                 json=payload,
-                timeout=60,
+                timeout=120,
             )
             if res.status_code == 200:
                 content = res.json().get("message", {}).get("content")
@@ -82,6 +82,36 @@ class OllamaCloudClient:
         except Exception as e:
             logger.warning(f"Ollama Cloud request failed: {e}")
             return None
+
+
+def _clean_json_str(raw: str) -> dict | None:
+    """Parses JSON from LLM output, handling markdown fences and extraneous text."""
+    if not raw:
+        return None
+    cleaned = raw.strip()
+    # Strip markdown code blocks ```json ... ```
+    if cleaned.startswith("```"):
+        lines = cleaned.split("\n")
+        if lines[0].startswith("```"):
+            lines = lines[1:]
+        if lines and lines[-1].strip().startswith("```"):
+            lines = lines[:-1]
+        cleaned = "\n".join(lines).strip()
+    
+    try:
+        return json.loads(cleaned)
+    except Exception:
+        pass
+        
+    # Extract JSON object substring
+    start = cleaned.find("{")
+    end = cleaned.rfind("}")
+    if start != -1 and end != -1 and end > start:
+        try:
+            return json.loads(cleaned[start:end+1])
+        except Exception:
+            pass
+    return None
 
 
 # Alias used by routes_live_scenario.py
@@ -327,7 +357,7 @@ class LiveScenarioService:
         ]
         
         try:
-            res = requests.get(url, timeout=5)
+            res = requests.get(url, timeout=10)
             if res.status_code == 200:
                 root = ET.fromstring(res.content)
                 articles = []
@@ -385,8 +415,8 @@ class LiveScenarioService:
                 )
 
                 raw = CloudLLMClient.generate(prompt, temperature=0.1)
-                if raw:
-                    parsed = json.loads(raw)
+                parsed = _clean_json_str(raw)
+                if parsed:
                     region_val = parsed.get("region", "Chennai").strip()
                     if region_val.lower() not in self.DC_MAPPING:
                         parsed["region"] = "Chennai"
@@ -520,8 +550,8 @@ class LiveScenarioService:
                 )
 
                 raw = CloudLLMClient.generate(prompt, temperature=0.2)
-                if raw:
-                    parsed = json.loads(raw)
+                parsed = _clean_json_str(raw)
+                if parsed:
                     health_risks = parsed.get("health_risks", [])
                     general_recs = parsed.get("general_recommendations", general_recs)
 

@@ -160,7 +160,12 @@ function TierTable({ items, onNavigate }) {
               <td><Badge label={r.expiry_risk} /></td>
               <td>
                 <button
-                  onClick={() => onNavigate('actions', { actionPriority: r.expiry_risk === 'WATCH' ? 'HIGH' : r.expiry_risk, filterSku: r.sku_id })}
+                  onClick={() => onNavigate('actions', { 
+                    actionPriority: r.expiry_risk === 'WATCH' ? 'HIGH' : r.expiry_risk, 
+                    filterSku: r.sku_id,
+                    fromPage: 'expiry',
+                    expiryItem: r
+                  })}
                   className="btn btn-primary"
                   style={{ padding: '6px 10px', fontSize: '11px' }}
                 >
@@ -179,7 +184,7 @@ function TierTable({ items, onNavigate }) {
 /* ─────────────────────────────────────────────
    Main Expiry Page
 ───────────────────────────────────────────── */
-export default function Expiry({ refreshKey, onNavigate }) {
+export default function Expiry({ refreshKey, onNavigate, resolvedBatches = [] }) {
   const [data, setData]       = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('critical');
@@ -196,10 +201,47 @@ export default function Expiry({ refreshKey, onNavigate }) {
   const summary    = data?.summary || {};
   const warehouses = data?.warehouses_at_risk || [];
 
+  const filterResolved = (items = []) => items.filter(item => !resolvedBatches.includes(item.batch_id));
+
+  const criticalItems = filterResolved(data?.critical_items);
+  const highItems     = filterResolved(data?.high_items);
+  const watchItems    = filterResolved(data?.watch_items);
+  const lowItems      = filterResolved(data?.low_items);
+
+  const totalLoss = [...criticalItems, ...highItems, ...watchItems, ...lowItems].reduce((acc, curr) => acc + (curr.projected_loss_inr || 0), 0);
+
+  const activeWarehouses = (warehouses || []).map(wh => {
+    const whBatches = [...criticalItems, ...highItems, ...watchItems, ...lowItems].filter(b => b.dc_id === wh.dc_id);
+    const critCount = criticalItems.filter(b => b.dc_id === wh.dc_id).length;
+    const highCount = highItems.filter(b => b.dc_id === wh.dc_id).length;
+    const watchCount = watchItems.filter(b => b.dc_id === wh.dc_id).length;
+    const lowCount = lowItems.filter(b => b.dc_id === wh.dc_id).length;
+    const atRiskUnits = whBatches.reduce((sum, b) => sum + (b.expected_writeoff_quantity || 0), 0);
+    const loss = whBatches.reduce((sum, b) => sum + (b.projected_loss_inr || 0), 0);
+    const worstScore = whBatches.length ? Math.max(...whBatches.map(b => b.expiry_risk_score || 0)) : 0;
+    const worstRisk = critCount > 0 ? 'CRITICAL' : highCount > 0 ? 'HIGH' : watchCount > 0 ? 'WATCH' : 'LOW';
+    const skusAff = new Set(whBatches.map(b => b.sku_id)).size;
+
+    return {
+      ...wh,
+      total_batches: whBatches.length,
+      critical_batches: critCount,
+      high_batches: highCount,
+      watch_batches: watchCount,
+      low_batches: lowCount,
+      skus_affected: skusAff,
+      total_at_risk_units: atRiskUnits,
+      total_projected_loss_inr: loss,
+      worst_risk_score: worstScore,
+      worst_risk_level: worstRisk,
+    };
+  }).filter(wh => wh.total_batches > 0);
+
   const tabs = [
-    { id: 'critical', label: '🔴 Critical',  count: summary.critical_count || 0, items: data?.critical_items || [], suggestion: data?.suggestions_critical, tier: 'CRITICAL', color: 'var(--accent-rose)'   },
-    { id: 'high',     label: '🟠 High Risk', count: summary.high_count     || 0, items: data?.high_items     || [], suggestion: data?.suggestions_high,     tier: 'HIGH',     color: 'var(--accent-orange)' },
-    { id: 'watch',    label: '👁️ Watch',     count: summary.watch_count    || 0, items: data?.watch_items    || [], suggestion: data?.suggestions_watch,    tier: 'WATCH',    color: 'var(--accent-yellow)' },
+    { id: 'critical', label: '🔴 Critical',  count: criticalItems.length, items: criticalItems, suggestion: data?.suggestions_critical, tier: 'CRITICAL', color: 'var(--accent-rose)'   },
+    { id: 'high',     label: '🟠 High Risk', count: highItems.length,     items: highItems,     suggestion: data?.suggestions_high,     tier: 'HIGH',     color: 'var(--accent-orange)' },
+    { id: 'watch',    label: '👁️ Watch',     count: watchItems.length,    items: watchItems,    suggestion: data?.suggestions_watch,    tier: 'WATCH',    color: 'var(--accent-yellow)' },
+    { id: 'low',      label: '🟢 Low Risk',  count: lowItems.length,      items: lowItems,      suggestion: { status: '✅ Low risk batch — comfortable shelf life remaining before consumption.', steps: ['Standard dispensing queue', 'Continuous baseline monitoring'] }, tier: 'LOW', color: 'var(--accent-emerald)' },
   ];
 
   const activeTabData = tabs.find(t => t.id === activeTab);
@@ -232,16 +274,17 @@ export default function Expiry({ refreshKey, onNavigate }) {
             <div className="card metric-card">
               <div className="metric-title">Total Projected Loss</div>
               <div className="metric-value" style={{ color: 'var(--accent-orange)' }}>
-                ₹{(summary.total_projected_loss_inr || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                ₹{(totalLoss || summary.total_projected_loss_inr || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}
               </div>
               <div className="metric-delta delta-warn">Model estimated write-off</div>
             </div>
             <div className="card metric-card">
               <div className="metric-title">Risk Batches Overview</div>
-              <div className="metric-value" style={{ fontSize: '20px', display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-                <span style={{ color: 'var(--accent-rose)' }}>🔴 {summary.critical_count || 0} Critical</span>
-                <span style={{ color: 'var(--accent-orange)' }}>🟠 {summary.high_count || 0} High</span>
-                <span style={{ color: 'var(--text-secondary)' }}>🟢 {summary.low_count || 0} Low</span>
+              <div className="metric-value" style={{ fontSize: '18px', display: 'flex', gap: '14px', flexWrap: 'wrap', alignItems: 'center' }}>
+                <span style={{ color: 'var(--accent-rose)' }}>🔴 {criticalItems.length} Critical</span>
+                <span style={{ color: 'var(--accent-orange)' }}>🟠 {highItems.length} High</span>
+                <span style={{ color: 'var(--accent-yellow)' }}>🟡 {watchItems.length} Watch</span>
+                <span style={{ color: 'var(--text-secondary)' }}>🟢 {lowItems.length} Low</span>
               </div>
               <div className="metric-delta delta-neg">Model identified risks</div>
             </div>
@@ -255,13 +298,13 @@ export default function Expiry({ refreshKey, onNavigate }) {
                 Warehouses at Risk
               </h3>
               <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
-                {warehouses.length} distribution center(s) · model-scored
+                {activeWarehouses.length} distribution center(s) · model-scored
               </span>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
-              {warehouses.length === 0
-                ? <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>No warehouse data available.</div>
-                : warehouses.map(wh => <WarehouseCard key={wh.dc_id} wh={wh} />)
+              {activeWarehouses.length === 0
+                ? <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>No warehouses currently at expiry risk.</div>
+                : activeWarehouses.map(wh => <WarehouseCard key={wh.dc_id} wh={wh} />)
               }
             </div>
           </div>
