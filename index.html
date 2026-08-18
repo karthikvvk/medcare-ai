@@ -107,7 +107,7 @@
 
     const LAMBDA_URL = "https://mvzngesp3qez4ahnsgijmehxmm0iypbg.lambda-url.ap-south-1.on.aws/";
 
-    const HEALTH_URL = "https://medcareai.ducdns.org/health";
+    const HEALTH_URL = "https://triggeredmedcareai.duckdns.org/health";
 
     let started = false;
 
@@ -168,7 +168,7 @@
 
 if (response.status === 200) {
     status.textContent = "Server ready. Redirecting...";
-    window.location.href = "https://medcareai.ducdns.org/";
+    window.location.href = "https://triggeredmedcareai.duckdns.org/";
     return;
 }
 
