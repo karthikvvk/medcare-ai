@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, FileResponse
+from fastapi.responses import JSONResponse, FileResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 import time
 from app.core.config import settings
@@ -56,6 +56,11 @@ app.include_router(routes_inventory.router, prefix=settings.API_V1_STR)
 app.include_router(routes_recommendations.router, prefix=settings.API_V1_STR)
 app.include_router(routes_surge.router, prefix=settings.API_V1_STR)
 app.include_router(routes_live_scenario.router, prefix=settings.API_V1_STR)
+# Health check endpoints
+@app.get("/health", response_class=PlainTextResponse, tags=["Health"])
+@app.get(f"{settings.API_V1_STR}/health", response_class=PlainTextResponse, tags=["Health"])
+def health_check():
+    return "running"
 
 import os
 
