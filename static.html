@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MedCare AI</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f7fa;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #1f2937;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 480px;
+            text-align: center;
+            background: white;
+            padding: 45px 35px;
+            border-radius: 16px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+        }
+
+        .logo {
+            font-size: 30px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .message {
+            font-size: 16px;
+            color: #6b7280;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .loader {
+            width: 45px;
+            height: 45px;
+            border: 4px solid #e5e7eb;
+            border-top: 4px solid #2563eb;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px auto;
+        }
+
+        .status {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .error {
+            color: #dc2626;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="logo">
+        MedCare AI
+    </div>
+
+    <div class="title">
+        Starting the server
+    </div>
+
+    <div class="message">
+        The application server is currently starting.
+        Please wait a few seconds.
+    </div>
+
+    <div class="loader"></div>
+
+    <div id="status" class="status">
+        Initializing server...
+    </div>
+
+</div>
+
+<script>
+
+    const LAMBDA_URL = "PASTE_YOUR_LAMBDA_FUNCTION_URL_HERE";
+
+    const HEALTH_URL = "https://medcareai.ducdns.org";
+
+    let started = false;
+
+    async function startServer() {
+
+        if (started) {
+            return;
+        }
+
+        started = true;
+
+        const status = document.getElementById("status");
+
+        try {
+
+            status.textContent = "Starting EC2 server...";
+
+            const response = await fetch(LAMBDA_URL, {
+                method: "POST"
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to start EC2");
+            }
+
+            status.textContent = "Server is booting...";
+
+            waitForServer();
+
+        } catch (error) {
+
+            console.error(error);
+
+            status.textContent =
+                "Unable to start the server. Retrying...";
+
+            started = false;
+
+            setTimeout(startServer, 3000);
+        }
+    }
+
+    async function waitForServer() {
+
+        const status = document.getElementById("status");
+
+        while (true) {
+
+            try {
+
+                const response = await fetch(
+                    HEALTH_URL + "?health_check=" + Date.now(),
+                    {
+                        method: "GET",
+                        cache: "no-store"
+                    }
+                );
+
+                if (response.status === 200) {
+
+                    status.textContent =
+                        "Server ready. Redirecting...";
+
+                    window.location.href = HEALTH_URL;
+
+                    return;
+                }
+
+            } catch (error) {
+                console.log("Server not ready");
+            }
+
+            status.textContent =
+                "Waiting for MedCare AI server...";
+
+            await new Promise(resolve => {
+                setTimeout(resolve, 2000);
+            });
+        }
+    }
+
+    startServer();
+
+</script>
+
+</body>
+</html>

@@ -8246,3 +8246,415 @@ fastapi.exceptions.ResponseValidationError: 409 validation errors:
 2026-08-16 23:31:57,225 [INFO] medcare: Endpoint /api/live-scenario/news served in 0.1733s
 2026-08-16 23:32:03,869 [INFO] medcare: Ollama Cloud responded successfully (model=gpt-oss:20b)
 2026-08-16 23:32:16,642 [INFO] medcare: Endpoint /api/live-scenario/analyze served in 18.1365s
+2026-08-17 08:53:02,167 [INFO] medcare: Endpoint /api/dashboard/distribution-centers served in 0.0602s
+2026-08-17 08:53:02,168 [INFO] medcare: Endpoint /api/dashboard/skus served in 0.0661s
+2026-08-17 08:53:02,181 [INFO] medcare: Endpoint /api/dashboard/distribution-centers served in 0.0044s
+2026-08-17 08:53:02,182 [INFO] medcare: Endpoint /api/dashboard/skus served in 0.0062s
+2026-08-17 08:53:02,331 [INFO] medcare: Endpoint /api/recommendations served in 0.1377s
+2026-08-17 08:53:02,552 [INFO] medcare: Endpoint /api/recommendations served in 0.2125s
+2026-08-17 08:53:04,738 [INFO] medcare: Endpoint /api/inventory/expiry-risks served in 2.5252s
+2026-08-17 08:53:04,902 [INFO] medcare: Endpoint /api/dashboard/summary served in 2.7090s
+2026-08-17 08:53:06,844 [INFO] medcare: Endpoint /api/inventory/expiry-risks served in 2.0963s
+2026-08-17 08:53:06,955 [INFO] medcare: Endpoint /api/dashboard/summary served in 2.0445s
+2026-08-17 08:53:09,149 [INFO] medcare: Endpoint /api/inventory/status served in 6.9564s
+2026-08-17 08:53:11,801 [INFO] medcare: Endpoint /api/inventory/status served in 2.6474s
+2026-08-17 08:53:13,780 [INFO] medcare: Endpoint /api/live-scenario/status served in 0.0170s
+2026-08-17 08:53:13,795 [INFO] medcare: Endpoint /api/live-scenario/status served in 0.0042s
+2026-08-17 08:53:13,800 [INFO] medcare: Fetching trending health/disaster headlines from Google News RSS...
+2026-08-17 08:53:13,825 [WARNING] medcare: Failed to fetch live RSS news (HTTPSConnectionPool(host='news.google.com', port=443): Max retries exceeded with url: /rss/search?q=health+outbreak+flood+heatwave+dengue+malaria+india&hl=en-IN&gl=IN&ceid=IN:en (Caused by NameResolutionError("HTTPSConnection(host='news.google.com', port=443): Failed to resolve 'news.google.com' ([Errno -3] Temporary failure in name resolution)"))). Using mock fallback headlines.
+2026-08-17 08:53:13,828 [INFO] medcare: Endpoint /api/live-scenario/news served in 0.0305s
+2026-08-17 08:53:13,843 [INFO] medcare: Fetching trending health/disaster headlines from Google News RSS...
+2026-08-17 08:53:13,848 [WARNING] medcare: Failed to fetch live RSS news (HTTPSConnectionPool(host='news.google.com', port=443): Max retries exceeded with url: /rss/search?q=health+outbreak+flood+heatwave+dengue+malaria+india&hl=en-IN&gl=IN&ceid=IN:en (Caused by NameResolutionError("HTTPSConnection(host='news.google.com', port=443): Failed to resolve 'news.google.com' ([Errno -3] Temporary failure in name resolution)"))). Using mock fallback headlines.
+2026-08-17 08:53:13,850 [INFO] medcare: Endpoint /api/live-scenario/news served in 0.0089s
+2026-08-17 08:53:16,318 [WARNING] medcare: Ollama Cloud request failed: HTTPSConnectionPool(host='ollama.com', port=443): Max retries exceeded with url: /api/chat (Caused by NameResolutionError("HTTPSConnection(host='ollama.com', port=443): Failed to resolve 'ollama.com' ([Errno -3] Temporary failure in name resolution)"))
+2026-08-17 08:53:16,318 [INFO] medcare: Initializing fallback demand surges for primary region...
+2026-08-17 08:53:28,806 [INFO] medcare: Endpoint /api/live-scenario/analyze served in 12.6373s
+2026-08-17 08:53:32,578 [INFO] medcare: Operational mode switched to SIMULATED
+2026-08-17 08:53:32,580 [INFO] medcare: Endpoint /api/live-scenario/mode served in 0.0037s
+2026-08-17 08:53:32,600 [INFO] medcare: Endpoint /api/live-scenario/status served in 0.0039s
+2026-08-17 08:53:32,618 [INFO] medcare: Fetching trending health/disaster headlines from Google News RSS...
+2026-08-17 08:53:32,623 [WARNING] medcare: Failed to fetch live RSS news (HTTPSConnectionPool(host='news.google.com', port=443): Max retries exceeded with url: /rss/search?q=health+outbreak+flood+heatwave+dengue+malaria+india&hl=en-IN&gl=IN&ceid=IN:en (Caused by NameResolutionError("HTTPSConnection(host='news.google.com', port=443): Failed to resolve 'news.google.com' ([Errno -3] Temporary failure in name resolution)"))). Using mock fallback headlines.
+2026-08-17 08:53:32,624 [INFO] medcare: Endpoint /api/live-scenario/news served in 0.0078s
+2026-08-17 08:53:33,830 [WARNING] medcare: Ollama Cloud request failed: HTTPSConnectionPool(host='ollama.com', port=443): Max retries exceeded with url: /api/chat (Caused by NameResolutionError("HTTPSConnection(host='ollama.com', port=443): Failed to resolve 'ollama.com' ([Errno -3] Temporary failure in name resolution)"))
+2026-08-17 08:53:33,830 [INFO] medcare: Initializing fallback demand surges for primary region...
+2026-08-17 08:53:46,216 [INFO] medcare: Endpoint /api/live-scenario/analyze served in 12.5330s
+2026-08-17 08:54:01,868 [INFO] medcare: Endpoint /api/recommendations served in 0.1877s
+2026-08-17 08:54:02,311 [INFO] medcare: Endpoint /api/recommendations served in 0.4274s
+2026-08-17 08:54:04,287 [INFO] medcare: Endpoint /api/inventory/expiry-risks served in 2.6063s
+2026-08-17 08:54:04,403 [INFO] medcare: Endpoint /api/dashboard/summary served in 2.7230s
+2026-08-17 08:54:06,212 [INFO] medcare: Endpoint /api/inventory/expiry-risks served in 1.9136s
+2026-08-17 08:54:06,306 [INFO] medcare: Endpoint /api/dashboard/summary served in 1.8939s
+2026-08-17 08:54:08,451 [INFO] medcare: Endpoint /api/inventory/status served in 6.7703s
+2026-08-17 08:54:11,009 [INFO] medcare: Endpoint /api/inventory/status served in 2.5548s
+2026-08-17 08:54:31,400 [INFO] medcare: Endpoint /api/forecast/historical-comparison served in 0.0159s
+2026-08-17 08:54:33,285 [INFO] medcare: Endpoint /api/forecast/historical-comparison served in 0.0110s
+2026-08-17 08:54:35,098 [INFO] medcare: Endpoint /api/forecast/historical-comparison served in 0.0106s
+2026-08-17 08:54:38,272 [INFO] medcare: Forecasting models loaded successfully from disk.
+2026-08-17 08:54:38,274 [INFO] medcare: Generating forecasts for target_date=2026-08-12...
+2026-08-17 08:54:39,310 [INFO] medcare: Endpoint /api/forecast/historical-comparison served in 0.0134s
+2026-08-17 08:54:39,604 [INFO] medcare: Engineering forecasting features...
+2026-08-17 08:54:46,202 [INFO] medcare: Feature matrix built: 5760 rows, 32 columns
+2026-08-17 08:54:54,130 [INFO] medcare: Endpoint /api/inventory/status served in 13.9651s
+2026-08-17 08:54:57,199 [INFO] medcare: DC name map loaded: {'DC001': 'Chennai DC', 'DC002': 'Bangalore DC', 'DC003': 'Hyderabad DC', 'DC004': 'Mumbai DC', 'DC005': 'Delhi DC', 'DC006': 'Kolkata DC', 'DC007': 'Pune DC', 'DC008': 'Ahmedabad DC'}
+2026-08-17 08:54:57,203 [INFO] medcare: Expiry predictions loaded: 6 records from /home/muruga/workspace/medcare-ai/app/services/../../data/processed/expiry_predictions.json
+2026-08-17 08:54:57,209 [INFO] medcare: ExpiryPredictionService (JSON mode): CRITICAL=2, HIGH=2, WATCH=1, LOW=1
+2026-08-17 08:54:57,213 [INFO] medcare: Endpoint /api/inventory/expiry-predictions served in 0.0406s
+2026-08-17 08:54:57,234 [INFO] medcare: Expiry predictions loaded: 6 records from /home/muruga/workspace/medcare-ai/app/services/../../data/processed/expiry_predictions.json
+2026-08-17 08:54:57,237 [INFO] medcare: ExpiryPredictionService (JSON mode): CRITICAL=2, HIGH=2, WATCH=1, LOW=1
+2026-08-17 08:54:57,238 [INFO] medcare: Endpoint /api/inventory/expiry-predictions served in 0.0069s
+2026-08-17 08:54:59,519 [INFO] medcare: Endpoint /api/recommendations served in 0.0234s
+2026-08-17 08:54:59,594 [INFO] medcare: Endpoint /api/recommendations served in 0.0521s
+2026-08-17 08:54:59,633 [INFO] medcare: Endpoint /api/forecast/historical-comparison served in 0.0577s
+2026-08-17 08:54:59,665 [INFO] medcare: Endpoint /api/forecast/historical-comparison served in 0.0228s
+2026-08-17 08:54:59,687 [INFO] medcare: Endpoint /api/forecast/historical-comparison served in 0.0127s
+2026-08-17 08:55:03,430 [INFO] medcare: Endpoint /api/inventory/status served in 9.2892s
+2026-08-17 08:55:07,382 [ERROR] medcare: Global exception caught on path /api/recommendations/REC-TR-727BF0/status: (sqlite3.OperationalError) database is locked
+[SQL: UPDATE recommendations SET status=? WHERE recommendations.recommendation_id = ?]
+[parameters: ('APPROVED', 'REC-TR-727BF0')]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+Traceback (most recent call last):
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1969, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: database is locked
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/muruga/workspace/medcare-ai/app/api/main.py", line 37, in add_process_time_header
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/starlette/middleware/cors.py", line 96, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/starlette/middleware/cors.py", line 154, in simple_response
+    await self.app(scope, receive, send)
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/starlette/routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/fastapi/routing.py", line 2734, in app
+    await route.handle(scope, receive, send)
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/fastapi/routing.py", line 1780, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/fastapi/routing.py", line 2789, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/fastapi/routing.py", line 1800, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/fastapi/routing.py", line 1279, in handle
+    await app(scope, receive, send)
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/fastapi/routing.py", line 158, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/fastapi/routing.py", line 144, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/fastapi/routing.py", line 706, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/fastapi/routing.py", line 354, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/anyio/to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 2641, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 1033, in run
+    result = context.run(func, *args)
+  File "/home/muruga/workspace/medcare-ai/app/api/routes_recommendations.py", line 204, in update_recommendation_status
+    db.commit()
+    ~~~~~~~~~^^
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 2035, in commit
+    trans.commit(_to_root=True)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "<string>", line 2, in commit
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/sqlalchemy/orm/state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 1316, in commit
+    self._prepare_impl()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "<string>", line 2, in _prepare_impl
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/sqlalchemy/orm/state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 1290, in _prepare_impl
+    self.session.flush()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 4353, in flush
+    self._flush(objects)
+    ~~~~~~~~~~~^^^^^^^^^
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 4488, in _flush
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/sqlalchemy/util/langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 4449, in _flush
+    flush_context.execute()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/sqlalchemy/orm/unitofwork.py", line 465, in execute
+    rec.execute(self)
+    ~~~~~~~~~~~^^^^^^
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/sqlalchemy/orm/unitofwork.py", line 641, in execute
+    util.preloaded.orm_persistence.save_obj(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self.mapper,
+        ^^^^^^^^^^^^
+        uow.states_for_mapper_hierarchy(self.mapper, False, False),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        uow,
+        ^^^^
+    )
+    ^
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/sqlalchemy/orm/persistence.py", line 86, in save_obj
+    _emit_update_statements(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        base_mapper,
+        ^^^^^^^^^^^^
+    ...<3 lines>...
+        update,
+        ^^^^^^^
+    )
+    ^
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/sqlalchemy/orm/persistence.py", line 913, in _emit_update_statements
+    c = connection.execute(
+        statement, multiparams, execution_options=execution_options
+    )
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1421, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/sqlalchemy/sql/elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1643, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1848, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1988, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 2365, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1969, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/muruga/workspace/medcare-ai/virtual/lib/python3.14/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) database is locked
+[SQL: UPDATE recommendations SET status=? WHERE recommendations.recommendation_id = ?]
+[parameters: ('APPROVED', 'REC-TR-727BF0')]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-08-17 08:55:07,661 [INFO] medcare: Expiry predictions loaded: 6 records from /home/muruga/workspace/medcare-ai/app/services/../../data/processed/expiry_predictions.json
+2026-08-17 08:55:07,661 [INFO] medcare: ExpiryPredictionService (JSON mode): CRITICAL=2, HIGH=2, WATCH=1, LOW=1
+2026-08-17 08:55:07,667 [INFO] medcare: Endpoint /api/inventory/expiry-predictions served in 0.0093s
+2026-08-17 08:55:07,691 [INFO] medcare: Expiry predictions loaded: 6 records from /home/muruga/workspace/medcare-ai/app/services/../../data/processed/expiry_predictions.json
+2026-08-17 08:55:07,691 [INFO] medcare: ExpiryPredictionService (JSON mode): CRITICAL=2, HIGH=2, WATCH=1, LOW=1
+2026-08-17 08:55:07,696 [INFO] medcare: Endpoint /api/inventory/expiry-predictions served in 0.0109s
+2026-08-17 08:55:09,765 [INFO] medcare: Generated 960 forecasts.
+2026-08-17 08:55:09,820 [INFO] medcare: Saved predicted outputs to output.db in table 2026-08-17_08
+2026-08-17 08:55:09,916 [INFO] medcare: Endpoint /api/forecast/generate served in 33.6975s
+2026-08-17 08:55:09,947 [INFO] medcare: Endpoint /api/forecast/historical-comparison served in 0.0123s
+2026-08-17 08:55:09,964 [INFO] medcare: Endpoint /api/recommendations/REC-TR-727BF0/status served in 3.2725s
+2026-08-17 08:55:09,985 [INFO] medcare: Endpoint /api/recommendations/REC-TR-727BF0/status served in 4.8534s
+2026-08-17 08:55:10,014 [INFO] medcare: Endpoint /api/recommendations served in 0.0303s
+2026-08-17 08:55:10,082 [INFO] medcare: Endpoint /api/recommendations served in 0.0538s
+2026-08-17 08:55:10,980 [INFO] medcare: Endpoint /api/inventory/status served in 7.5314s
+2026-08-17 08:55:13,504 [INFO] medcare: Endpoint /api/inventory/status served in 2.5194s
+2026-08-17 08:55:16,299 [INFO] medcare: Endpoint /api/inventory/status served in 2.7888s
+2026-08-17 08:55:29,072 [INFO] medcare: Endpoint /api/recommendations served in 0.1749s
+2026-08-17 08:55:29,333 [INFO] medcare: Endpoint /api/recommendations served in 0.2357s
+2026-08-17 08:55:31,010 [INFO] medcare: Endpoint /api/inventory/expiry-risks served in 2.1128s
+2026-08-17 08:55:31,047 [INFO] medcare: Endpoint /api/dashboard/summary served in 2.1512s
+2026-08-17 08:55:32,955 [INFO] medcare: Endpoint /api/inventory/expiry-risks served in 1.9349s
+2026-08-17 08:55:33,082 [INFO] medcare: Endpoint /api/dashboard/summary served in 2.0265s
+2026-08-17 08:55:35,339 [INFO] medcare: Endpoint /api/inventory/status served in 6.4425s
+2026-08-17 08:55:37,929 [INFO] medcare: Endpoint /api/inventory/status served in 2.5803s
+2026-08-17 08:55:48,678 [INFO] medcare: Endpoint /api/forecast/historical-comparison served in 0.0085s
+2026-08-17 08:55:51,021 [INFO] medcare: Endpoint /api/forecast/historical-comparison served in 0.0104s
+2026-08-17 08:55:52,771 [INFO] medcare: Endpoint /api/forecast/historical-comparison served in 0.0103s
+2026-08-17 08:55:56,417 [INFO] medcare: Endpoint /api/inventory/status served in 2.8369s
+2026-08-17 08:55:58,107 [INFO] medcare: Expiry predictions loaded: 6 records from /home/muruga/workspace/medcare-ai/app/services/../../data/processed/expiry_predictions.json
+2026-08-17 08:55:58,107 [INFO] medcare: ExpiryPredictionService (JSON mode): CRITICAL=2, HIGH=2, WATCH=1, LOW=1
+2026-08-17 08:55:58,109 [INFO] medcare: Endpoint /api/inventory/expiry-predictions served in 0.0064s
+2026-08-17 08:55:58,117 [INFO] medcare: Expiry predictions loaded: 6 records from /home/muruga/workspace/medcare-ai/app/services/../../data/processed/expiry_predictions.json
+2026-08-17 08:55:58,117 [INFO] medcare: ExpiryPredictionService (JSON mode): CRITICAL=2, HIGH=2, WATCH=1, LOW=1
+2026-08-17 08:55:58,118 [INFO] medcare: Endpoint /api/inventory/expiry-predictions served in 0.0033s
+2026-08-17 08:55:59,380 [INFO] medcare: Endpoint /api/inventory/status served in 2.9574s
+2026-08-17 08:56:06,017 [INFO] medcare: Endpoint /api/recommendations served in 0.0210s
+2026-08-17 08:56:06,059 [INFO] medcare: Endpoint /api/recommendations served in 0.0342s
+2026-08-17 08:56:06,093 [INFO] medcare: Endpoint /api/forecast/historical-comparison served in 0.0313s
+2026-08-17 08:56:06,139 [INFO] medcare: Endpoint /api/forecast/historical-comparison served in 0.0262s
+2026-08-17 08:56:06,178 [INFO] medcare: Endpoint /api/forecast/historical-comparison served in 0.0185s
+2026-08-17 08:56:07,214 [INFO] medcare: Endpoint /api/recommendations/REC-TR-A97722/status served in 0.0071s
+2026-08-17 08:56:07,235 [INFO] medcare: Expiry predictions loaded: 6 records from /home/muruga/workspace/medcare-ai/app/services/../../data/processed/expiry_predictions.json
+2026-08-17 08:56:07,236 [INFO] medcare: ExpiryPredictionService (JSON mode): CRITICAL=2, HIGH=2, WATCH=1, LOW=1
+2026-08-17 08:56:07,243 [INFO] medcare: Endpoint /api/inventory/expiry-predictions served in 0.0127s
+2026-08-17 08:56:07,254 [INFO] medcare: Endpoint /api/recommendations served in 0.0331s
+2026-08-17 08:56:07,257 [INFO] medcare: Expiry predictions loaded: 6 records from /home/muruga/workspace/medcare-ai/app/services/../../data/processed/expiry_predictions.json
+2026-08-17 08:56:07,257 [INFO] medcare: ExpiryPredictionService (JSON mode): CRITICAL=2, HIGH=2, WATCH=1, LOW=1
+2026-08-17 08:56:07,258 [INFO] medcare: Endpoint /api/inventory/expiry-predictions served in 0.0028s
+2026-08-17 08:56:09,323 [INFO] medcare: Endpoint /api/inventory/status served in 3.2722s
+2026-08-17 08:56:12,021 [INFO] medcare: Top-10 surge products loaded from /home/muruga/workspace/medcare-ai/app/services/../../data/processed/top_10_surge_products.json
+2026-08-17 08:56:12,022 [INFO] medcare: Endpoint /api/surge/top-products served in 0.0102s
+2026-08-17 08:56:12,040 [INFO] medcare: Surge predictions loaded: 108 rows from /home/muruga/workspace/medcare-ai/app/services/../../data/processed/surge_predictions.csv
+2026-08-17 08:56:12,043 [INFO] medcare: Endpoint /api/surge/top-products served in 0.0106s
+2026-08-17 08:56:12,044 [INFO] medcare: Surge predictions loaded: 108 rows from /home/muruga/workspace/medcare-ai/app/services/../../data/processed/surge_predictions.csv
+2026-08-17 08:56:12,066 [INFO] medcare: Endpoint /api/surge/summary served in 0.0550s
+2026-08-17 08:56:12,073 [INFO] medcare: Endpoint /api/surge/predictions served in 0.0614s
+2026-08-17 08:56:12,102 [INFO] medcare: Endpoint /api/surge/summary served in 0.0200s
+2026-08-17 08:56:12,106 [INFO] medcare: Endpoint /api/surge/predictions served in 0.0148s
+2026-08-17 08:56:12,413 [INFO] medcare: Endpoint /api/inventory/status served in 3.0831s
+2026-08-17 08:56:15,265 [INFO] medcare: Endpoint /api/inventory/status served in 2.8450s
+2026-08-17 08:56:15,649 [INFO] medcare: Endpoint /api/surge/predictions served in 0.0074s
+2026-08-17 08:56:16,731 [INFO] medcare: Endpoint /api/surge/predictions served in 0.0057s
+2026-08-17 08:56:19,269 [INFO] medcare: Endpoint /api/recommendations served in 0.0179s
+2026-08-17 08:56:19,438 [INFO] medcare: Endpoint /api/recommendations served in 0.1610s
+2026-08-17 08:56:22,125 [INFO] medcare: Endpoint /api/recommendations/transfers served in 0.0122s
+2026-08-17 08:56:22,146 [INFO] medcare: Endpoint /api/recommendations/transfers served in 0.0093s
+2026-08-17 08:56:24,173 [INFO] medcare: Endpoint /api/recommendations served in 0.0186s
+2026-08-17 08:56:24,220 [INFO] medcare: Endpoint /api/recommendations served in 0.0373s
+2026-08-17 08:56:24,254 [INFO] medcare: Endpoint /api/forecast/historical-comparison served in 0.0555s
+2026-08-17 08:56:24,281 [INFO] medcare: Endpoint /api/forecast/historical-comparison served in 0.0145s
+2026-08-17 08:56:24,328 [INFO] medcare: Endpoint /api/forecast/historical-comparison served in 0.0287s
+2026-08-17 08:56:26,949 [INFO] medcare: Endpoint /api/inventory/status served in 2.7510s
+2026-08-17 08:56:28,331 [INFO] medcare: Endpoint /api/forecast/historical-comparison served in 0.0076s
+2026-08-17 08:56:28,340 [INFO] medcare: Endpoint /api/forecast/historical-comparison served in 0.0043s
+2026-08-17 08:56:29,627 [INFO] medcare: Endpoint /api/inventory/status served in 2.6734s
+2026-08-17 08:56:32,266 [INFO] medcare: Endpoint /api/inventory/status served in 2.6334s
+2026-08-17 08:56:33,344 [INFO] medcare: Endpoint /api/forecast/historical-comparison served in 0.0088s
+2026-08-17 08:56:33,393 [INFO] medcare: Endpoint /api/forecast/historical-comparison served in 0.0154s
+2026-08-17 08:56:35,475 [INFO] medcare: Endpoint /api/recommendations/REC-RP-D2AB1F/status served in 0.0129s
+2026-08-17 08:56:35,532 [INFO] medcare: Endpoint /api/recommendations served in 0.0454s
+2026-08-17 08:56:35,581 [INFO] medcare: Endpoint /api/forecast/historical-comparison served in 0.0148s
+2026-08-17 08:56:35,616 [INFO] medcare: Endpoint /api/forecast/historical-comparison served in 0.0177s
+2026-08-17 08:56:35,940 [INFO] medcare: Endpoint /api/inventory/status served in 3.6695s
+2026-08-17 08:56:38,670 [INFO] medcare: Endpoint /api/inventory/status served in 2.7234s
+2026-08-17 08:56:41,139 [INFO] medcare: Endpoint /api/inventory/status served in 2.4643s
+2026-08-17 08:56:50,571 [INFO] medcare: Endpoint /api/inventory/status served in 9.4262s
+2026-08-17 08:57:04,432 [INFO] medcare: Endpoint /api/inventory/status served in 13.8485s
+2026-08-17 08:57:09,255 [INFO] medcare: Endpoint /api/inventory/status served in 13.6840s
+2026-08-17 08:57:11,075 [INFO] medcare: Endpoint /api/live-scenario/status served in 0.0021s
+2026-08-17 08:57:11,081 [INFO] medcare: Endpoint /api/live-scenario/status served in 0.0012s
+2026-08-17 08:57:11,085 [INFO] medcare: Fetching trending health/disaster headlines from Google News RSS...
+2026-08-17 08:57:11,089 [WARNING] medcare: Failed to fetch live RSS news (HTTPSConnectionPool(host='news.google.com', port=443): Max retries exceeded with url: /rss/search?q=health+outbreak+flood+heatwave+dengue+malaria+india&hl=en-IN&gl=IN&ceid=IN:en (Caused by NameResolutionError("HTTPSConnection(host='news.google.com', port=443): Failed to resolve 'news.google.com' ([Errno -3] Temporary failure in name resolution)"))). Using mock fallback headlines.
+2026-08-17 08:57:11,090 [INFO] medcare: Endpoint /api/live-scenario/news served in 0.0055s
+2026-08-17 08:57:11,104 [INFO] medcare: Fetching trending health/disaster headlines from Google News RSS...
+2026-08-17 08:57:11,107 [WARNING] medcare: Failed to fetch live RSS news (HTTPSConnectionPool(host='news.google.com', port=443): Max retries exceeded with url: /rss/search?q=health+outbreak+flood+heatwave+dengue+malaria+india&hl=en-IN&gl=IN&ceid=IN:en (Caused by NameResolutionError("HTTPSConnection(host='news.google.com', port=443): Failed to resolve 'news.google.com' ([Errno -3] Temporary failure in name resolution)"))). Using mock fallback headlines.
+2026-08-17 08:57:11,108 [INFO] medcare: Endpoint /api/live-scenario/news served in 0.0058s
+2026-08-17 08:57:12,796 [INFO] medcare: Endpoint /api/recommendations/simulate served in 30.8972s
+2026-08-17 08:57:18,239 [INFO] medcare: Endpoint /api/live-scenario/status served in 0.0040s
+2026-08-17 08:57:18,256 [INFO] medcare: Endpoint /api/live-scenario/status served in 0.0045s
+2026-08-17 08:57:18,258 [INFO] medcare: Fetching trending health/disaster headlines from Google News RSS...
+2026-08-17 08:57:18,265 [WARNING] medcare: Failed to fetch live RSS news (HTTPSConnectionPool(host='news.google.com', port=443): Max retries exceeded with url: /rss/search?q=health+outbreak+flood+heatwave+dengue+malaria+india&hl=en-IN&gl=IN&ceid=IN:en (Caused by NameResolutionError("HTTPSConnection(host='news.google.com', port=443): Failed to resolve 'news.google.com' ([Errno -3] Temporary failure in name resolution)"))). Using mock fallback headlines.
+2026-08-17 08:57:18,267 [INFO] medcare: Endpoint /api/live-scenario/news served in 0.0125s
+2026-08-17 08:57:18,281 [INFO] medcare: Fetching trending health/disaster headlines from Google News RSS...
+2026-08-17 08:57:18,286 [WARNING] medcare: Failed to fetch live RSS news (HTTPSConnectionPool(host='news.google.com', port=443): Max retries exceeded with url: /rss/search?q=health+outbreak+flood+heatwave+dengue+malaria+india&hl=en-IN&gl=IN&ceid=IN:en (Caused by NameResolutionError("HTTPSConnection(host='news.google.com', port=443): Failed to resolve 'news.google.com' ([Errno -3] Temporary failure in name resolution)"))). Using mock fallback headlines.
+2026-08-17 08:57:18,288 [INFO] medcare: Endpoint /api/live-scenario/news served in 0.0092s
+2026-08-17 08:57:28,807 [INFO] medcare: Endpoint /api/live-scenario/simulate served in 0.0037s
+2026-08-17 08:57:28,825 [INFO] medcare: Endpoint /api/live-scenario/status served in 0.0038s
+2026-08-17 08:57:28,844 [INFO] medcare: Fetching trending health/disaster headlines from Google News RSS...
+2026-08-17 08:57:28,850 [WARNING] medcare: Failed to fetch live RSS news (HTTPSConnectionPool(host='news.google.com', port=443): Max retries exceeded with url: /rss/search?q=health+outbreak+flood+heatwave+dengue+malaria+india&hl=en-IN&gl=IN&ceid=IN:en (Caused by NameResolutionError("HTTPSConnection(host='news.google.com', port=443): Failed to resolve 'news.google.com' ([Errno -3] Temporary failure in name resolution)"))). Using mock fallback headlines.
+2026-08-17 08:57:28,851 [INFO] medcare: Endpoint /api/live-scenario/news served in 0.0092s
+2026-08-17 08:57:31,067 [WARNING] medcare: Ollama Cloud request failed: HTTPSConnectionPool(host='ollama.com', port=443): Max retries exceeded with url: /api/chat (Caused by NameResolutionError("HTTPSConnection(host='ollama.com', port=443): Failed to resolve 'ollama.com' ([Errno -3] Temporary failure in name resolution)"))
+2026-08-17 08:57:31,067 [INFO] medcare: Initializing fallback demand surges for primary region...
+2026-08-17 08:57:43,713 [INFO] medcare: Endpoint /api/live-scenario/analyze served in 12.8994s
+2026-08-17 08:57:51,103 [INFO] medcare: Endpoint /api/dashboard/skus served in 0.0052s
+2026-08-17 08:57:51,136 [INFO] medcare: Endpoint /api/dashboard/skus served in 0.0082s
+2026-08-17 08:57:55,837 [INFO] medcare: Endpoint /api/dashboard/distribution-centers served in 0.0050s
+2026-08-17 08:57:57,291 [INFO] medcare: Endpoint /api/inventory/status served in 2.9130s
+2026-08-17 08:57:57,586 [INFO] medcare: Endpoint /api/recommendations served in 0.0184s
+2026-08-17 08:57:58,868 [INFO] medcare: Endpoint /api/dashboard/distribution-centers served in 0.0064s
+2026-08-17 10:53:19,436 [INFO] medcare: Endpoint /api/dashboard/skus served in 0.0702s
+2026-08-17 10:53:19,438 [INFO] medcare: Endpoint /api/dashboard/distribution-centers served in 0.0667s
+2026-08-17 10:53:19,462 [INFO] medcare: Endpoint /api/dashboard/distribution-centers served in 0.0078s
+2026-08-17 10:53:19,469 [INFO] medcare: Endpoint /api/dashboard/skus served in 0.0167s
+2026-08-17 10:53:19,650 [INFO] medcare: Endpoint /api/recommendations served in 0.1678s
+2026-08-17 10:53:19,744 [INFO] medcare: Endpoint /api/recommendations served in 0.0803s
+2026-08-17 10:53:21,570 [INFO] medcare: Endpoint /api/inventory/expiry-risks served in 2.0397s
+2026-08-17 10:53:21,670 [INFO] medcare: Endpoint /api/dashboard/summary served in 2.1883s
+2026-08-17 10:53:23,336 [INFO] medcare: Endpoint /api/inventory/expiry-risks served in 1.7570s
+2026-08-17 10:53:23,410 [INFO] medcare: Endpoint /api/dashboard/summary served in 1.7332s
+2026-08-17 10:53:25,794 [INFO] medcare: Endpoint /api/inventory/status served in 6.3117s
+2026-08-17 10:53:28,363 [INFO] medcare: Endpoint /api/inventory/status served in 2.5616s
+2026-08-17 11:42:16,178 [INFO] medcare: Endpoint /api/dashboard/distribution-centers served in 0.0903s
+2026-08-17 11:42:16,182 [INFO] medcare: Endpoint /api/dashboard/skus served in 0.1060s
+2026-08-17 11:42:16,201 [INFO] medcare: Endpoint /api/dashboard/distribution-centers served in 0.0094s
+2026-08-17 11:42:16,206 [INFO] medcare: Endpoint /api/dashboard/skus served in 0.0128s
+2026-08-17 11:42:16,404 [INFO] medcare: Endpoint /api/recommendations served in 0.1859s
+2026-08-17 11:42:16,511 [INFO] medcare: Endpoint /api/recommendations served in 0.0910s
+2026-08-17 11:42:18,295 [INFO] medcare: Endpoint /api/inventory/expiry-risks served in 2.0510s
+2026-08-17 11:42:18,414 [INFO] medcare: Endpoint /api/dashboard/summary served in 2.1971s
+2026-08-17 11:42:20,168 [INFO] medcare: Endpoint /api/inventory/expiry-risks served in 1.8630s
+2026-08-17 11:42:20,261 [INFO] medcare: Endpoint /api/dashboard/summary served in 1.8362s
+2026-08-17 11:42:20,684 [INFO] medcare: Endpoint /api/dashboard/distribution-centers served in 0.0035s
+2026-08-17 11:42:20,687 [INFO] medcare: Endpoint /api/dashboard/skus served in 0.0062s
+2026-08-17 11:42:20,698 [INFO] medcare: Endpoint /api/dashboard/distribution-centers served in 0.0063s
+2026-08-17 11:42:20,699 [INFO] medcare: Endpoint /api/dashboard/skus served in 0.0044s
+2026-08-17 11:42:21,058 [INFO] medcare: Endpoint /api/recommendations served in 0.3406s
+2026-08-17 11:42:21,389 [INFO] medcare: Endpoint /api/recommendations served in 0.3185s
+2026-08-17 11:42:23,411 [INFO] medcare: Endpoint /api/inventory/expiry-risks served in 2.6938s
+2026-08-17 11:42:23,432 [INFO] medcare: Endpoint /api/dashboard/summary served in 2.7167s
+2026-08-17 11:42:25,604 [INFO] medcare: Endpoint /api/inventory/expiry-risks served in 2.1865s
+2026-08-17 11:42:25,606 [INFO] medcare: Endpoint /api/dashboard/summary served in 2.1637s
+2026-08-17 11:42:29,336 [INFO] medcare: Endpoint /api/inventory/status served in 13.1187s
+2026-08-17 11:42:30,048 [INFO] medcare: Endpoint /api/inventory/status served in 9.3319s
+2026-08-17 11:42:32,515 [INFO] medcare: Endpoint /api/inventory/status served in 2.4626s
