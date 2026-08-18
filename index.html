@@ -107,7 +107,7 @@
 
     const LAMBDA_URL = "https://mvzngesp3qez4ahnsgijmehxmm0iypbg.lambda-url.ap-south-1.on.aws/";
 
-    const HEALTH_URL = "https://medcareai.ducdns.org";
+    const HEALTH_URL = "https://medcareai.ducdns.org/health";
 
     let started = false;
 
@@ -159,22 +159,18 @@
             try {
 
                 const response = await fetch(
-                    HEALTH_URL + "?health_check=" + Date.now(),
-                    {
-                        method: "GET",
-                        cache: "no-store"
-                    }
-                );
+    HEALTH_URL + "?health=" + Date.now(),
+    {
+        method: "GET",
+        cache: "no-store"
+    }
+);
 
-                if (response.status === 200) {
-
-                    status.textContent =
-                        "Server ready. Redirecting...";
-
-                    window.location.href = HEALTH_URL;
-
-                    return;
-                }
+if (response.status === 200) {
+    status.textContent = "Server ready. Redirecting...";
+    window.location.href = "https://medcareai.ducdns.org/";
+    return;
+}
 
             } catch (error) {
                 console.log("Server not ready");
