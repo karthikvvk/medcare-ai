@@ -105,9 +105,16 @@
 
 <script>
 
-    const LAMBDA_URL = "https://mvzngesp3qez4ahnsgijmehxmm0iypbg.lambda-url.ap-south-1.on.aws/";
+    const LAMBDA_URL =
+        "https://mvzngesp3qez4ahnsgijmehxmm0iypbg.lambda-url.ap-south-1.on.aws/";
 
-    const HEALTH_URL = "https://triggeredmedcareai.duckdns.org/health";
+    const HEALTH_URL =
+        "https://triggeredmedcareai.duckdns.org/health";
+
+    const REDIRECT_URL =
+        "https://triggeredmedcareai.duckdns.org/";
+
+    const RETRY_INTERVAL = 3000;
 
     let started = false;
 
@@ -130,25 +137,29 @@
             });
 
             if (!response.ok) {
-                throw new Error("Failed to start EC2");
+                throw new Error(
+                    `Lambda returned HTTP ${response.status}`
+                );
             }
 
-            status.textContent = "Server is booting...";
+            status.textContent =
+                "Server is booting...";
 
-            waitForServer();
+            await waitForServer();
 
         } catch (error) {
 
-            console.error(error);
+            console.error("Lambda error:", error);
 
             status.textContent =
-                "Unable to start the server. Retrying...";
+                "Unable to start the server. Retrying in 3 seconds...";
 
             started = false;
 
-            setTimeout(startServer, 3000);
+            setTimeout(startServer, RETRY_INTERVAL);
         }
     }
+
 
     async function waitForServer() {
 
@@ -159,31 +170,43 @@
             try {
 
                 const response = await fetch(
-    HEALTH_URL + "?health=" + Date.now(),
-    {
-        method: "GET",
-        cache: "no-store"
-    }
-);
+                    HEALTH_URL + "?health=" + Date.now(),
+                    {
+                        method: "GET",
+                        cache: "no-store"
+                    }
+                );
 
-if (response.status === 200) {
-    status.textContent = "Server ready. Redirecting...";
-    window.location.href = "https://triggeredmedcareai.duckdns.org/";
-    return;
-}
+                if (response.status === 200) {
+
+                    status.textContent =
+                        "Server ready. Redirecting...";
+
+                    window.location.href = REDIRECT_URL;
+
+                    return;
+                }
+
+                status.textContent =
+                    `Server responded with HTTP ${response.status}. Retrying in 3 seconds...`;
 
             } catch (error) {
-                console.log("Server not ready");
+
+                console.log(
+                    "Server not ready:",
+                    error
+                );
+
+                status.textContent =
+                    "Waiting for MedCare AI server... Retrying in 3 seconds...";
             }
 
-            status.textContent =
-                "Waiting for MedCare AI server...";
-
             await new Promise(resolve => {
-                setTimeout(resolve, 2000);
+                setTimeout(resolve, RETRY_INTERVAL);
             });
         }
     }
+
 
     startServer();
 

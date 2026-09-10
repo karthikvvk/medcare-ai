@@ -586,15 +586,16 @@ h2.section-title {
     cursor: pointer;
 }
 
-/* Toast container for overlays */
+/* Toast container for overlays (offset to accommodate bottom-right widget) */
 .toast-container {
     position: fixed;
-    bottom: 24px;
+    bottom: 84px;
     right: 24px;
     z-index: 9999;
     display: flex;
     flex-direction: column;
     gap: 8px;
+    pointer-events: none;
 }
 
 .toast {
@@ -653,4 +654,267 @@ body.light-theme .toast {
 /* Animate fade in */
 .animate-fade-in {
     animation: fadeIn 0.4s ease-out;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   GitHub Bottom-Right Floating Hover Widget
+   ───────────────────────────────────────────────────────────── */
+.github-hover-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9990;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+/* Floating button / pill */
+.github-hover-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    height: 44px;
+    padding: 0 16px;
+    background: rgba(14, 28, 42, 0.88);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(6, 182, 212, 0.25);
+    border-radius: 9999px;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 12px rgba(6, 182, 212, 0.12);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    user-select: none;
+}
+
+body.light-theme .github-hover-pill {
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(6, 182, 212, 0.25);
+    color: var(--text-primary);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08), 0 0 12px rgba(6, 182, 212, 0.08);
+}
+
+.github-hover-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--accent-emerald);
+    box-shadow: 0 0 8px var(--accent-emerald);
+    flex-shrink: 0;
+}
+
+.github-hover-icon {
+    font-size: 1.25rem;
+    color: #ffffff;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.light-theme .github-hover-icon {
+    color: #1e293b;
+}
+
+.github-hover-label {
+    letter-spacing: 0.02em;
+}
+
+.github-hover-arrow {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    transition: transform 0.25s ease, color 0.25s ease;
+}
+
+.github-hover-pill:hover,
+.github-hover-pill:focus-visible {
+    background: rgba(20, 38, 56, 0.98);
+    border-color: var(--accent-indigo);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(6, 182, 212, 0.28);
+    transform: translateY(-2px);
+    color: #ffffff;
+    outline: none;
+}
+
+body.light-theme .github-hover-pill:hover,
+body.light-theme .github-hover-pill:focus-visible {
+    background: #ffffff;
+    border-color: var(--accent-indigo);
+    box-shadow: 0 12px 32px rgba(6, 182, 212, 0.22);
+    color: var(--accent-indigo);
+}
+
+.github-hover-pill:hover .github-hover-icon {
+    transform: rotate(360deg) scale(1.08);
+}
+
+.github-hover-pill:hover .github-hover-arrow {
+    transform: translate(2px, -2px);
+    color: var(--accent-indigo);
+}
+
+/* Floating hover preview card */
+.github-hover-card {
+    position: absolute;
+    bottom: calc(100% + 12px);
+    right: 0;
+    width: 340px;
+    max-width: calc(100vw - 48px);
+    padding: 14px 16px;
+    background: rgba(11, 20, 29, 0.96);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(6, 182, 212, 0.28);
+    border-radius: 14px;
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.65), 0 0 24px rgba(6, 182, 212, 0.16);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px) scale(0.95);
+    transform-origin: bottom right;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+    z-index: 10;
+}
+
+body.light-theme .github-hover-card {
+    background: rgba(255, 255, 255, 0.98);
+    border: 1px solid rgba(6, 182, 212, 0.22);
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.14), 0 0 24px rgba(6, 182, 212, 0.1);
+}
+
+.github-hover-container:hover .github-hover-card,
+.github-hover-container:focus-within .github-hover-card {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+.github-hover-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.github-hover-card-icon {
+    font-size: 1.65rem;
+    color: #ffffff;
+}
+
+body.light-theme .github-hover-card-icon {
+    color: #0f172a;
+}
+
+.github-hover-card-meta {
+    display: flex;
+    flex-direction: column;
+}
+
+.github-hover-card-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+
+.github-hover-card-branch {
+    font-size: 0.75rem;
+    color: var(--accent-emerald);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 2px;
+}
+
+/* URL container with copy button */
+.github-hover-card-url-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 6px 10px;
+    margin-bottom: 12px;
+}
+
+body.light-theme .github-hover-card-url-wrap {
+    background: rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.github-hover-card-url {
+    flex: 1;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: 0.78rem;
+    color: var(--accent-indigo);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.github-hover-copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(6, 182, 212, 0.15);
+    border: 1px solid rgba(6, 182, 212, 0.3);
+    color: var(--text-primary);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.github-hover-copy-btn:hover {
+    background: var(--accent-indigo);
+    color: #ffffff;
+    border-color: var(--accent-indigo);
+}
+
+/* Card footer */
+.github-hover-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: 0.8rem;
+}
+
+body.light-theme .github-hover-card-footer {
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.github-hover-card-hint {
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+}
+
+.github-hover-card-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--accent-indigo);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease, gap 0.2s ease;
+}
+
+.github-hover-card-link:hover {
+    color: #ffffff;
+    gap: 7px;
+}
+
+body.light-theme .github-hover-card-link:hover {
+    color: #0284c7;
 }

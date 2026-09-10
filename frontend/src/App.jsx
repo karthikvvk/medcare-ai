@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
+import GithubHover from './components/GithubHover';
 import { ToastProvider, useToast } from './components/Toast';
 import Overview from './pages/Overview';
 import Forecast from './pages/Forecast';
@@ -124,6 +125,7 @@ function AppContent() {
           ) : PageComponent}
         </div>
       </main>
+      <GithubHover />
     </div>
   );
 }
